@@ -818,13 +818,26 @@ const ClientsManagement = () => {
     setIsUploading(false);
   };
 
+  const deleteClient = async (clientId, clientName) => {
+    if (window.confirm(`Are you sure you want to delete client "${clientName}"?`)) {
+      try {
+        await axios.delete(`${API}/clients/${clientId}`);
+        fetchClients();
+        alert('Client deleted successfully');
+      } catch (error) {
+        console.error('Failed to delete client:', error);
+        alert('Failed to delete client');
+      }
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Clients Management</h2>
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Clients Management</h2>
         <button
           onClick={() => setShowUpload(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
         >
           Import Excel
         </button>
@@ -832,30 +845,30 @@ const ClientsManagement = () => {
 
       {/* Upload Modal */}
       {showUpload && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Import Clients from Excel</h3>
-            <p className="text-gray-600 mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md">
+            <h3 className="text-lg sm:text-xl font-bold mb-4">Import Clients from Excel</h3>
+            <p className="text-gray-600 mb-4 text-sm sm:text-base">
               Excel file should have columns named "Name" and "Address"
             </p>
             <input
               type="file"
               accept=".xlsx,.xls"
               onChange={handleExcelUpload}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none mb-4"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none mb-4 text-sm sm:text-base"
               disabled={isUploading}
             />
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
               <button
                 onClick={() => setShowUpload(false)}
                 disabled={isUploading}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                className="w-full sm:flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition disabled:opacity-50"
               >
                 Cancel
               </button>
             </div>
             {isUploading && (
-              <div className="mt-4 text-center text-blue-600">
+              <div className="mt-4 text-center text-blue-600 text-sm">
                 Uploading and processing...
               </div>
             )}
@@ -869,18 +882,27 @@ const ClientsManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Name</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Address</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Added</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Name</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Address</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Added</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {clients.map(client => (
                 <tr key={client.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-800">{client.name}</td>
-                  <td className="px-6 py-4 text-gray-600">{client.address}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-800 text-sm sm:text-base">{client.name}</td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 text-sm sm:text-base">{client.address}</td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
                     {new Date(client.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4">
+                    <button
+                      onClick={() => deleteClient(client.id, client.name)}
+                      className="text-red-600 hover:text-red-800 font-medium text-sm"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -891,9 +913,9 @@ const ClientsManagement = () => {
 
       {clients.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">👥</div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">No clients yet</h3>
-          <p className="text-gray-600">Import your client list from Excel to get started!</p>
+          <div className="text-4xl sm:text-6xl mb-4">👥</div>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No clients yet</h3>
+          <p className="text-gray-600 text-sm sm:text-base px-4">Import your client list from Excel to get started!</p>
         </div>
       )}
     </div>
