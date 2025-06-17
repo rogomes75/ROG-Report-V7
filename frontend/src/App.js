@@ -1171,11 +1171,11 @@ const ServicesConcluded = () => {
                 <p className="text-sm font-medium text-blue-800 mb-2">Financial Summary:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <span className="text-blue-700">Total Cost: </span>
+                    <span className="text-blue-700">Estimate: </span>
                     <span className="font-medium">${report.total_cost?.toFixed(2) || '0.00'}</span>
                   </div>
                   <div>
-                    <span className="text-blue-700">Parts Cost: </span>
+                    <span className="text-blue-700">Cost of Services: </span>
                     <span className="font-medium">${report.parts_cost?.toFixed(2) || '0.00'}</span>
                   </div>
                   <div>
