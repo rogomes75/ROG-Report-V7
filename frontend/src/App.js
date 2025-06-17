@@ -506,17 +506,6 @@ const ServiceReports = () => {
     }
   };
 
-  const updateFinancialField = async (reportId, field, value) => {
-    try {
-      await axios.put(`${API}/reports/${reportId}`, {
-        [field]: value
-      });
-      fetchReports();
-    } catch (error) {
-      console.error(`Failed to update ${field}:`, error);
-    }
-  };
-
   const getStatusColor = (status) => {
     const colors = {
       'reported': 'bg-yellow-100 text-yellow-800',
