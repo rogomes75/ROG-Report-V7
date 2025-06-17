@@ -135,7 +135,7 @@ const Login = () => {
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          <p>Default admin login: admin / admin123</p>
+          <p>Please contact your administrator for login credentials</p>
         </div>
       </div>
     </div>
