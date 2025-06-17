@@ -483,6 +483,17 @@ const ServiceReports = () => {
       console.error('Failed to update report:', error);
     }
   };
+  const updateFinancialField = async (reportId, field, value) => {
+    try {
+      await axios.put(`${API}/reports/${reportId}`, {
+        [field]: value
+      });
+      fetchReports();
+    } catch (error) {
+      console.error(`Failed to update ${field}:`, error);
+    }
+  };
+
 
   const updateAdminNotes = async (reportId, notes) => {
     try {
