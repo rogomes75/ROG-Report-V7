@@ -180,7 +180,7 @@ async def create_user(user_data: UserCreate, current_user: User = Depends(get_cu
     user_dict = user_data.dict()
     user_dict["password_hash"] = get_password_hash(user_dict.pop("password"))
     user_dict["id"] = str(uuid.uuid4())
-    user_dict["created_at"] = datetime.utcnow()
+    user_dict["created_at"] = get_la_time()
     
     await db.users.insert_one(user_dict)
     return User(**user_dict)
