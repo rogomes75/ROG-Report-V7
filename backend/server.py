@@ -40,7 +40,6 @@ api_router = APIRouter(prefix="/api")
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
-    email: str
     role: str  # "admin" or "employee"
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
