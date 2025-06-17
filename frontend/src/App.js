@@ -845,7 +845,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       
       <main>
         {activeTab === 'reports' && <ServiceReports />}
