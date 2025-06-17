@@ -340,6 +340,9 @@ const ServiceReports = () => {
   const [photos, setPhotos] = useState([]);
   const [employeeNotes, setEmployeeNotes] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
+  const [totalCost, setTotalCost] = useState('');
+  const [partsCost, setPartsCost] = useState('');
+  const [grossProfit, setGrossProfit] = useState('');
 
   useEffect(() => {
     fetchReports();
