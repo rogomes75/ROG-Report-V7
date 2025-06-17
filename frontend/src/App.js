@@ -928,7 +928,6 @@ const UsersManagement = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
     role: 'employee'
   });
@@ -954,7 +953,7 @@ const UsersManagement = () => {
     try {
       await axios.post(`${API}/users`, formData);
       setShowCreateForm(false);
-      setFormData({ username: '', email: '', password: '', role: 'employee' });
+      setFormData({ username: '', password: '', role: 'employee' });
       fetchUsers();
     } catch (error) {
       console.error('Failed to create user:', error);
@@ -976,12 +975,12 @@ const UsersManagement = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">User Management</h2>
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">User Management</h2>
         <button
           onClick={() => setShowCreateForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
         >
           Add User
         </button>
@@ -989,9 +988,9 @@ const UsersManagement = () => {
 
       {/* Create User Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Create New User</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md">
+            <h3 className="text-lg sm:text-xl font-bold mb-4">Create New User</h3>
             
             <form onSubmit={handleCreateUser} className="space-y-4">
               <input
@@ -999,16 +998,7 @@ const UsersManagement = () => {
                 placeholder="Username"
                 value={formData.username}
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                required
-              />
-              
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
                 required
               />
               
@@ -1017,31 +1007,31 @@ const UsersManagement = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
                 required
               />
               
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({...formData, role: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
               >
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
               </select>
 
-              <div className="flex space-x-4 pt-4">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                  className="w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
                 >
                   {isLoading ? 'Creating...' : 'Create User'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition"
+                  className="w-full sm:flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition"
                 >
                   Cancel
                 </button>
@@ -1057,20 +1047,18 @@ const UsersManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Username</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Role</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Created</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Username</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Role</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Created</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {users.map(user => (
                 <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-800">{user.username}</td>
-                  <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-800 text-sm sm:text-base">{user.username}</td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
                       user.role === 'admin' 
                         ? 'bg-purple-100 text-purple-800'
                         : 'bg-blue-100 text-blue-800'
@@ -1078,14 +1066,14 @@ const UsersManagement = () => {
                       {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4">
                     {user.username !== 'admin' && (
                       <button
                         onClick={() => deleteUser(user.id)}
-                        className="text-red-600 hover:text-red-800 font-medium"
+                        className="text-red-600 hover:text-red-800 font-medium text-sm"
                       >
                         Delete
                       </button>
