@@ -20,6 +20,15 @@ import pytz
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Los Angeles timezone
+LA_TZ = pytz.timezone('America/Los_Angeles')
+
+def get_la_time():
+    return datetime.now(LA_TZ)
+
+def get_la_time_str():
+    return get_la_time().strftime("%H:%M")
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
