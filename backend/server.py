@@ -194,6 +194,16 @@ async def delete_user(user_id: str, current_user: User = Depends(get_current_use
     return {"message": "User deleted successfully"}
 
 # Client routes
+@api_router.delete("/clients/{client_id}")
+async def delete_client(client_id: str, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admin can delete clients")
+    
+    result = await db.clients.delete_one({"id": client_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Client not found")
+    return {"message": "Client deleted successfully"}
+
 @api_router.post("/clients/import-excel")
 async def import_clients_excel(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
     if current_user.role != "admin":
