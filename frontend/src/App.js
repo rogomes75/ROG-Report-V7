@@ -1151,7 +1151,7 @@ const ClientsManagement = () => {
                   <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-800 text-sm sm:text-base">{client.name}</td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 text-sm sm:text-base">{client.address}</td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
-                    {new Date(client.created_at).toLocaleDateString()}
+                    {formatLATime(client.created_at)}
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4">
                     <button
