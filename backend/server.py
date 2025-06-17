@@ -78,13 +78,13 @@ class ServiceReport(BaseModel):
     photos: List[str] = []  # base64 encoded images
     priority: str  # "URGENT", "SAME WEEK", "NEXT WEEK"
     status: str = "reported"  # "reported", "scheduled", "in_progress", "completed"
-    request_date: datetime = Field(default_factory=datetime.utcnow)
+    request_date: datetime = Field(default_factory=get_la_time)
     completion_date: Optional[datetime] = None
     admin_notes: str = ""
     employee_notes: str = ""
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    created_time: str = Field(default_factory=lambda: datetime.utcnow().strftime("%H:%M"))
-    last_modified: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=get_la_time)
+    created_time: str = Field(default_factory=get_la_time_str)
+    last_modified: datetime = Field(default_factory=get_la_time)
     modification_history: List[dict] = []
 
 class ServiceReportCreate(BaseModel):
