@@ -255,7 +255,7 @@ async def create_client(client_data: dict, current_user: User = Depends(get_curr
         "id": str(uuid.uuid4()),
         "name": client_data["name"],
         "address": client_data["address"],
-        "created_at": datetime.utcnow()
+        "created_at": get_la_time()
     }
     
     await db.clients.insert_one(client_dict)
