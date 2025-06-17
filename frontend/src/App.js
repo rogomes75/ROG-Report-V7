@@ -349,7 +349,9 @@ const ServiceReports = () => {
   const fetchReports = async () => {
     try {
       const response = await axios.get(`${API}/reports`);
-      setReports(response.data);
+      // Filter out completed reports - they should only appear in Completed tab
+      const activeReports = response.data.filter(report => report.status !== 'completed');
+      setReports(activeReports);
     } catch (error) {
       console.error('Failed to fetch reports:', error);
     }
