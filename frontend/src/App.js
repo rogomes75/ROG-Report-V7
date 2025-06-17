@@ -760,11 +760,11 @@ const ServiceReports = () => {
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
                 <p className="text-gray-600 text-sm sm:text-base">By: {report.employee_name}</p>
                 <p className="text-xs sm:text-sm text-gray-500">
-                  Created: {new Date(report.request_date).toLocaleDateString()} at {report.created_time || 'N/A'}
+                  Created: {formatLATime(report.request_date)} at {report.created_time || formatLATimeOnly(report.request_date)}
                 </p>
                 {report.last_modified && (
                   <p className="text-xs text-gray-400">
-                    Last modified: {new Date(report.last_modified).toLocaleDateString()} at {new Date(report.last_modified).toLocaleTimeString()}
+                    Last modified: {formatLADateTime(report.last_modified)}
                   </p>
                 )}
               </div>
