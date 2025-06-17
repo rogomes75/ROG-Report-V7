@@ -71,7 +71,11 @@ class ServiceReport(BaseModel):
     request_date: datetime = Field(default_factory=datetime.utcnow)
     completion_date: Optional[datetime] = None
     admin_notes: str = ""
+    employee_notes: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_time: str = Field(default_factory=lambda: datetime.utcnow().strftime("%H:%M"))
+    last_modified: datetime = Field(default_factory=datetime.utcnow)
+    modification_history: List[dict] = []
 
 class ServiceReportCreate(BaseModel):
     client_id: str
