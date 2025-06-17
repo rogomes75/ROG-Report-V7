@@ -1038,7 +1038,7 @@ const ServicesConcluded = () => {
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Services Concluded</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Services Completed</h2>
         <div className="text-sm text-gray-600">
           Total completed: {reports.length}
         </div>
