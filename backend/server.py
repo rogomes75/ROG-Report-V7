@@ -293,6 +293,9 @@ async def create_service_report(report_data: ServiceReportCreate, current_user: 
     report_dict["request_date"] = get_la_time()
     report_dict["last_modified"] = get_la_time()
     report_dict["modification_history"] = []
+    report_dict["total_cost"] = 0.0
+    report_dict["parts_cost"] = 0.0
+    report_dict["gross_profit"] = 0.0
     
     await db.service_reports.insert_one(report_dict)
     return ServiceReport(**report_dict)
