@@ -277,10 +277,10 @@ async def create_service_report(report_data: ServiceReportCreate, current_user: 
     report_dict["status"] = "reported"
     report_dict["admin_notes"] = ""
     report_dict["employee_notes"] = ""
-    report_dict["created_at"] = datetime.utcnow()
-    report_dict["created_time"] = datetime.utcnow().strftime("%H:%M")
-    report_dict["request_date"] = datetime.utcnow()
-    report_dict["last_modified"] = datetime.utcnow()
+    report_dict["created_at"] = get_la_time()
+    report_dict["created_time"] = get_la_time_str()
+    report_dict["request_date"] = get_la_time()
+    report_dict["last_modified"] = get_la_time()
     report_dict["modification_history"] = []
     
     await db.service_reports.insert_one(report_dict)
