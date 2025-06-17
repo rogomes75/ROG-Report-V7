@@ -710,15 +710,65 @@ const ServiceReports = () => {
               </div>
 
               {user?.role === 'admin' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Admin Notes</label>
-                  <textarea
-                    value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-20 resize-none text-sm sm:text-base"
-                    placeholder="Admin notes..."
-                  />
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Admin Notes</label>
+                    <textarea
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-20 resize-none text-sm sm:text-base"
+                      placeholder="Admin notes..."
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Total Cost ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={totalCost}
+                        onChange={(e) => {
+                          setTotalCost(e.target.value);
+                          if (partsCost && e.target.value) {
+                            setGrossProfit((parseFloat(e.target.value) - parseFloat(partsCost)).toFixed(2));
+                          }
+                        }}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Parts Cost ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={partsCost}
+                        onChange={(e) => {
+                          setPartsCost(e.target.value);
+                          if (totalCost && e.target.value) {
+                            setGrossProfit((parseFloat(totalCost) - parseFloat(e.target.value)).toFixed(2));
+                          }
+                        }}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={grossProfit}
+                        readOnly
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-gray-100 text-sm sm:text-base"
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
 
               <div>
