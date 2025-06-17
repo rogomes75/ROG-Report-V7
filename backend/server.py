@@ -127,13 +127,12 @@ async def startup_event():
         admin_user_data = {
             "id": str(uuid.uuid4()),
             "username": "admin",
-            "email": "admin@poolmaintenance.com",
             "password_hash": get_password_hash("admin123"),
             "role": "admin",
             "created_at": datetime.utcnow()
         }
         await db.users.insert_one(admin_user_data)
-        logging.info("Admin user created with username: admin, password: admin123")
+        logging.info("Admin user created")
 
 # Auth routes
 @api_router.post("/auth/login")
