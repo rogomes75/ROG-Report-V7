@@ -892,6 +892,41 @@ const ServiceReports = () => {
               </div>
             )}
 
+            {/* Financial Information (Admin Only) */}
+            {user?.role === 'admin' && (report.total_cost > 0 || report.parts_cost > 0) && (
+              <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                <p className="text-sm font-medium text-green-800 mb-2">Financial Summary:</p>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-green-700">Total Cost: </span>
+                    <span className="font-medium">${report.total_cost?.toFixed(2) || '0.00'}</span>
+                  </div>
+                  <div>
+                    <span className="text-green-700">Parts Cost: </span>
+                    <span className="font-medium">${report.parts_cost?.toFixed(2) || '0.00'}</span>
+                  </div>
+                  <div>
+                    <span className="text-green-700">Gross Profit: </span>
+                    <span className="font-medium">${((report.total_cost || 0) - (report.parts_cost || 0)).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modification History (for all users) */}
+            {report.modification_history && report.modification_history.length > 0 && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-700 mb-2">Service History:</p>
+                <div className="space-y-1">
+                  {report.modification_history.map((mod, index) => (
+                    <p key={index} className="text-xs text-gray-600">
+                      {formatLADateTime(mod.modified_at)} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Admin Controls */}
             {user?.role === 'admin' && (
               <div className="border-t pt-4 mt-4">
