@@ -266,16 +266,16 @@ const Navigation = ({ activeTab, setActiveTab }) => {
               
               <button
                 onClick={() => {
-                  setActiveTab('concluded');
+                  setActiveTab('completed');
                   setShowMobileMenu(false);
                 }}
                 className={`px-4 py-2 rounded-lg font-medium transition text-left ${
-                  activeTab === 'concluded'
+                  activeTab === 'completed'
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-600 hover:text-blue-600'
                 }`}
               >
-                Concluded
+                Completed
               </button>
               
               {user?.role === 'admin' && (
