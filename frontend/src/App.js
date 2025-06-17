@@ -159,19 +159,21 @@ const Login = () => {
 // Navigation Component
 const Navigation = ({ activeTab, setActiveTab }) => {
   const { user, logout } = useAuth();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
     <nav className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
         <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-blue-600">Pool Maintenance</h1>
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <h1 className="text-lg sm:text-2xl font-bold text-blue-600">Pool Maintenance</h1>
             <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase">
               {user?.role}
             </span>
           </div>
 
-          <div className="flex items-center space-x-6">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
             <button
               onClick={() => setActiveTab('reports')}
               className={`px-4 py-2 rounded-lg font-medium transition ${
@@ -181,6 +183,17 @@ const Navigation = ({ activeTab, setActiveTab }) => {
               }`}
             >
               Reports
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('concluded')}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                activeTab === 'concluded'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:text-blue-600'
+              }`}
+            >
+              Concluded
             </button>
             
             {user?.role === 'admin' && (
@@ -209,16 +222,102 @@ const Navigation = ({ activeTab, setActiveTab }) => {
             )}
 
             <div className="flex items-center space-x-2">
-              <span className="text-gray-700">{user?.username}</span>
+              <span className="text-gray-700 text-sm">{user?.username}</span>
               <button
                 onClick={logout}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition text-sm"
               >
                 Logout
               </button>
             </div>
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <span className="text-gray-700 text-sm">{user?.username}</span>
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="text-gray-600 hover:text-blue-600 p-2"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="md:hidden border-t border-gray-200 py-4">
+            <div className="flex flex-col space-y-2">
+              <button
+                onClick={() => {
+                  setActiveTab('reports');
+                  setShowMobileMenu(false);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition text-left ${
+                  activeTab === 'reports'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:text-blue-600'
+                }`}
+              >
+                Reports
+              </button>
+              
+              <button
+                onClick={() => {
+                  setActiveTab('concluded');
+                  setShowMobileMenu(false);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition text-left ${
+                  activeTab === 'concluded'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:text-blue-600'
+                }`}
+              >
+                Concluded
+              </button>
+              
+              {user?.role === 'admin' && (
+                <>
+                  <button
+                    onClick={() => {
+                      setActiveTab('clients');
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-4 py-2 rounded-lg font-medium transition text-left ${
+                      activeTab === 'clients'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-600 hover:text-blue-600'
+                    }`}
+                  >
+                    Clients
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('users');
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-4 py-2 rounded-lg font-medium transition text-left ${
+                      activeTab === 'users'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-600 hover:text-blue-600'
+                    }`}
+                  >
+                    Users
+                  </button>
+                </>
+              )}
+              
+              <button
+                onClick={logout}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition text-left mt-4"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
