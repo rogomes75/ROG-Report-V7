@@ -139,7 +139,7 @@ async def startup_event():
             "username": "admin",
             "password_hash": get_password_hash("admin123"),
             "role": "admin",
-            "created_at": datetime.utcnow()
+            "created_at": get_la_time()
         }
         await db.users.insert_one(admin_user_data)
         logging.info("Admin user created")
