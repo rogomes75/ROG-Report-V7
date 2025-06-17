@@ -230,7 +230,7 @@ async def import_clients_excel(file: UploadFile = File(...), current_user: User 
                 "id": str(uuid.uuid4()),
                 "name": str(row['Name']) if 'Name' in row else str(row['name']),
                 "address": str(row['Address']) if 'Address' in row else str(row['address']),
-                "created_at": datetime.utcnow()
+                "created_at": get_la_time()
             }
             clients_data.append(client_data)
         
