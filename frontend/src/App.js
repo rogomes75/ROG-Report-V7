@@ -862,7 +862,7 @@ const ServiceReports = () => {
                     <div className="space-y-1">
                       {report.modification_history.map((mod, index) => (
                         <p key={index} className="text-xs text-gray-600">
-                          {new Date(mod.modified_at).toLocaleDateString()} at {mod.modified_time} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
+                          {formatLADateTime(mod.modified_at)} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
                         </p>
                       ))}
                     </div>
