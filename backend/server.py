@@ -86,6 +86,10 @@ class ServiceReport(BaseModel):
     created_time: str = Field(default_factory=get_la_time_str)
     last_modified: datetime = Field(default_factory=get_la_time)
     modification_history: List[dict] = []
+    # Financial fields (admin only)
+    total_cost: Optional[float] = 0.0
+    parts_cost: Optional[float] = 0.0
+    gross_profit: Optional[float] = 0.0
 
 class ServiceReportCreate(BaseModel):
     client_id: str
