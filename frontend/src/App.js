@@ -3,8 +3,18 @@ import './App.css';
 import axios from 'axios';
 import moment from 'moment-timezone';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Utility function to format LA time
+const formatLATime = (date) => {
+  return moment(date).tz('America/Los_Angeles').format('MM/DD/YYYY');
+};
+
+const formatLADateTime = (date) => {
+  return moment(date).tz('America/Los_Angeles').format('MM/DD/YYYY hh:mm A');
+};
+
+const formatLATimeOnly = (date) => {
+  return moment(date).tz('America/Los_Angeles').format('hh:mm A');
+};
 
 // Auth Context
 const AuthContext = createContext();
