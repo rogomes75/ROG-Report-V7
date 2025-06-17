@@ -315,8 +315,8 @@ async def update_service_report(report_id: str, update_data: ServiceReportUpdate
         modification_entry = {
             "modified_by": current_user.username,
             "modified_by_role": current_user.role,
-            "modified_at": datetime.utcnow(),
-            "modified_time": datetime.utcnow().strftime("%H:%M"),
+            "modified_at": get_la_time(),
+            "modified_time": get_la_time_str(),
             "changes": list(update_dict.keys())
         }
         
@@ -325,7 +325,7 @@ async def update_service_report(report_id: str, update_data: ServiceReportUpdate
         current_history.append(modification_entry)
         
         update_dict["modification_history"] = current_history
-        update_dict["last_modified"] = datetime.utcnow()
+        update_dict["last_modified"] = get_la_time()
     
     result = await db.service_reports.update_one(
         {"id": report_id},
