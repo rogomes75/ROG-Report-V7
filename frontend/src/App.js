@@ -216,6 +216,8 @@ const ServiceReports = () => {
   const [reports, setReports] = useState([]);
   const [clients, setClients] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingReport, setEditingReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Form states
@@ -223,6 +225,8 @@ const ServiceReports = () => {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('SAME WEEK');
   const [photos, setPhotos] = useState([]);
+  const [employeeNotes, setEmployeeNotes] = useState('');
+  const [adminNotes, setAdminNotes] = useState('');
 
   useEffect(() => {
     fetchReports();
@@ -267,6 +271,16 @@ const ServiceReports = () => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
+  const resetForm = () => {
+    setSelectedClient('');
+    setDescription('');
+    setPriority('SAME WEEK');
+    setPhotos([]);
+    setEmployeeNotes('');
+    setAdminNotes('');
+    setEditingReport(null);
+  };
+
   const handleCreateReport = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -280,14 +294,50 @@ const ServiceReports = () => {
       });
 
       setShowCreateForm(false);
-      setSelectedClient('');
-      setDescription('');
-      setPriority('SAME WEEK');
-      setPhotos([]);
+      resetForm();
       fetchReports();
     } catch (error) {
       console.error('Failed to create report:', error);
       alert('Failed to create report');
+    }
+    setIsLoading(false);
+  };
+
+  const handleEditReport = (report) => {
+    setEditingReport(report);
+    setSelectedClient(report.client_id);
+    setDescription(report.description);
+    setPriority(report.priority);
+    setPhotos(report.photos || []);
+    setEmployeeNotes(report.employee_notes || '');
+    setAdminNotes(report.admin_notes || '');
+    setShowEditForm(true);
+  };
+
+  const handleUpdateReport = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const updateData = {
+        description,
+        priority,
+        photos,
+        employee_notes: employeeNotes
+      };
+
+      if (user?.role === 'admin') {
+        updateData.admin_notes = adminNotes;
+      }
+
+      await axios.put(`${API}/reports/${editingReport.id}`, updateData);
+
+      setShowEditForm(false);
+      resetForm();
+      fetchReports();
+    } catch (error) {
+      console.error('Failed to update report:', error);
+      alert('Failed to update report');
     }
     setIsLoading(false);
   };
@@ -302,6 +352,17 @@ const ServiceReports = () => {
       fetchReports();
     } catch (error) {
       console.error('Failed to update report:', error);
+    }
+  };
+
+  const updateAdminNotes = async (reportId, notes) => {
+    try {
+      await axios.put(`${API}/reports/${reportId}`, {
+        admin_notes: notes
+      });
+      fetchReports();
+    } catch (error) {
+      console.error('Failed to update admin notes:', error);
     }
   };
 
@@ -325,13 +386,13 @@ const ServiceReports = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Service Reports</h2>
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Service Reports</h2>
         {user?.role === 'employee' && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center space-x-2"
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition flex items-center justify-center space-x-2"
           >
             <span>+</span>
             <span>New Report</span>
@@ -341,9 +402,9 @@ const ServiceReports = () => {
 
       {/* Create Report Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-4">Create Service Report</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4">Create Service Report</h3>
             
             <form onSubmit={handleCreateReport} className="space-y-4">
               <div>
@@ -351,7 +412,7 @@ const ServiceReports = () => {
                 <select
                   value={selectedClient}
                   onChange={(e) => setSelectedClient(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
                   required
                 >
                   <option value="">Select a client</option>
@@ -368,7 +429,7 @@ const ServiceReports = () => {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
                   required
                 >
                   <option value="URGENT">URGENT</option>
@@ -382,7 +443,7 @@ const ServiceReports = () => {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-32 resize-none"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-24 sm:h-32 resize-none text-sm sm:text-base"
                   placeholder="Describe the maintenance issue..."
                   required
                 />
@@ -398,22 +459,22 @@ const ServiceReports = () => {
                   accept="image/*"
                   capture="environment"
                   onChange={handlePhotoUpload}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
                 />
                 
                 {photos.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2 mt-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4">
                     {photos.map((photo, index) => (
                       <div key={index} className="relative">
                         <img
                           src={photo}
                           alt={`Upload ${index + 1}`}
-                          className="w-full h-24 object-cover rounded-lg"
+                          className="w-full h-20 sm:h-24 object-cover rounded-lg"
                         />
                         <button
                           type="button"
                           onClick={() => removePhoto(index)}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs sm:text-sm"
                         >
                           ×
                         </button>
@@ -423,18 +484,151 @@ const ServiceReports = () => {
                 )}
               </div>
 
-              <div className="flex space-x-4 pt-4">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                  className="w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
                 >
                   {isLoading ? 'Creating...' : 'Create Report'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowCreateForm(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition"
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    resetForm();
+                  }}
+                  className="w-full sm:flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Report Modal */}
+      {showEditForm && editingReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4">Edit Service Report</h3>
+            
+            <form onSubmit={handleUpdateReport} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
+                <select
+                  value={selectedClient}
+                  onChange={(e) => setSelectedClient(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                  required
+                >
+                  <option value="">Select a client</option>
+                  {clients.map(client => (
+                    <option key={client.id} value={client.id}>
+                      {client.name} - {client.address}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                  required
+                >
+                  <option value="URGENT">URGENT</option>
+                  <option value="SAME WEEK">SAME WEEK</option>
+                  <option value="NEXT WEEK">NEXT WEEK</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-24 sm:h-32 resize-none text-sm sm:text-base"
+                  placeholder="Describe the maintenance issue..."
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Employee Notes</label>
+                <textarea
+                  value={employeeNotes}
+                  onChange={(e) => setEmployeeNotes(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-20 resize-none text-sm sm:text-base"
+                  placeholder="Add any additional notes..."
+                />
+              </div>
+
+              {user?.role === 'admin' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Admin Notes</label>
+                  <textarea
+                    value={adminNotes}
+                    onChange={(e) => setAdminNotes(e.target.value)}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-20 resize-none text-sm sm:text-base"
+                    placeholder="Admin notes..."
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Photos ({photos.length}/5)
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoUpload}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                />
+                
+                {photos.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4">
+                    {photos.map((photo, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={photo}
+                          alt={`Photo ${index + 1}`}
+                          className="w-full h-20 sm:h-24 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(index)}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs sm:text-sm"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                >
+                  {isLoading ? 'Updating...' : 'Update Report'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditForm(false);
+                    resetForm();
+                  }}
+                  className="w-full sm:flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition"
                 >
                   Cancel
                 </button>
@@ -445,43 +639,68 @@ const ServiceReports = () => {
       )}
 
       {/* Reports List */}
-      <div className="grid gap-6">
+      <div className="space-y-4 sm:space-y-6">
         {reports.map(report => (
-          <div key={report.id} className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800">{report.client_name}</h3>
-                <p className="text-gray-600">By: {report.employee_name}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(report.request_date).toLocaleDateString()}
+          <div key={report.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                <p className="text-gray-600 text-sm sm:text-base">By: {report.employee_name}</p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Created: {new Date(report.request_date).toLocaleDateString()} at {report.created_time || 'N/A'}
                 </p>
+                {report.last_modified && (
+                  <p className="text-xs text-gray-400">
+                    Last modified: {new Date(report.last_modified).toLocaleDateString()} at {new Date(report.last_modified).toLocaleTimeString()}
+                  </p>
+                )}
               </div>
-              <div className="flex space-x-2">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(report.priority)}`}>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPriorityColor(report.priority)}`}>
                   {report.priority}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(report.status)}`}>
+                <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
                   {report.status.replace('_', ' ').toUpperCase()}
                 </span>
               </div>
             </div>
 
-            <p className="text-gray-700 mb-4">{report.description}</p>
+            <p className="text-gray-700 mb-4 text-sm sm:text-base">{report.description}</p>
+
+            {report.employee_notes && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm font-medium text-blue-800 mb-1">Employee Notes:</p>
+                <p className="text-blue-700 text-sm">{report.employee_notes}</p>
+              </div>
+            )}
 
             {report.photos && report.photos.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-4">
                 {report.photos.map((photo, index) => (
                   <img
                     key={index}
                     src={photo}
                     alt={`Report photo ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition"
+                    className="w-full h-20 sm:h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition"
                     onClick={() => window.open(photo, '_blank')}
                   />
                 ))}
               </div>
             )}
 
+            {/* Edit Button */}
+            {(user?.role === 'admin' || report.employee_id === user?.id) && (
+              <div className="mb-4">
+                <button
+                  onClick={() => handleEditReport(report)}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition text-sm"
+                >
+                  Edit Report
+                </button>
+              </div>
+            )}
+
+            {/* Admin Controls */}
             {user?.role === 'admin' && (
               <div className="border-t pt-4 mt-4">
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -489,7 +708,7 @@ const ServiceReports = () => {
                     <button
                       key={status}
                       onClick={() => updateReportStatus(report.id, status)}
-                      className={`px-4 py-2 rounded-lg font-medium transition ${
+                      className={`px-3 py-2 rounded-lg font-medium transition text-xs sm:text-sm ${
                         report.status === status
                           ? 'bg-blue-600 text-white'
                           : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
@@ -500,20 +719,42 @@ const ServiceReports = () => {
                   ))}
                 </div>
 
-                <textarea
-                  value={report.admin_notes || ''}
-                  onChange={(e) => {
-                    const notes = e.target.value;
-                    // Auto-save notes after user stops typing
-                    clearTimeout(window.notesTimeout);
-                    window.notesTimeout = setTimeout(() => {
-                      updateReportStatus(report.id, report.status, notes);
-                    }, 1000);
-                  }}
-                  placeholder="Admin notes..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                  rows="2"
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Admin Notes:</label>
+                  <textarea
+                    value={report.admin_notes || ''}
+                    onChange={(e) => {
+                      // Update the local state immediately for better UX
+                      const updatedReports = reports.map(r => 
+                        r.id === report.id ? { ...r, admin_notes: e.target.value } : r
+                      );
+                      setReports(updatedReports);
+                      
+                      // Auto-save notes after user stops typing
+                      clearTimeout(window.notesTimeout);
+                      window.notesTimeout = setTimeout(() => {
+                        updateAdminNotes(report.id, e.target.value);
+                      }, 1000);
+                    }}
+                    placeholder="Admin notes..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none text-sm h-20"
+                    rows="2"
+                  />
+                </div>
+
+                {/* Modification History */}
+                {report.modification_history && report.modification_history.length > 0 && (
+                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Modification History:</p>
+                    <div className="space-y-1">
+                      {report.modification_history.map((mod, index) => (
+                        <p key={index} className="text-xs text-gray-600">
+                          {new Date(mod.modified_at).toLocaleDateString()} at {mod.modified_time} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -522,9 +763,9 @@ const ServiceReports = () => {
 
       {reports.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">🏊‍♂️</div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">No service reports yet</h3>
-          <p className="text-gray-600">
+          <div className="text-4xl sm:text-6xl mb-4">🏊‍♂️</div>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No service reports yet</h3>
+          <p className="text-gray-600 text-sm sm:text-base px-4">
             {user?.role === 'employee' 
               ? 'Create your first service report to get started!'
               : 'No service reports have been created yet.'
