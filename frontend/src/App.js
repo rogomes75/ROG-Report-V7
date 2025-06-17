@@ -1324,7 +1324,7 @@ const UsersManagement = () => {
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
-                    {new Date(user.created_at).toLocaleDateString()}
+                    {formatLATime(user.created_at)}
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4">
                     {user.username !== 'admin' && (
