@@ -968,20 +968,6 @@ const ServiceReports = () => {
                     rows="2"
                   />
                 </div>
-
-                {/* Modification History */}
-                {report.modification_history && report.modification_history.length > 0 && (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Modification History:</p>
-                    <div className="space-y-1">
-                      {report.modification_history.map((mod, index) => (
-                        <p key={index} className="text-xs text-gray-600">
-                          {formatLADateTime(mod.modified_at)} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
