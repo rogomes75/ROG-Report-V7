@@ -962,7 +962,7 @@ const ServiceReports = () => {
                   <p className="text-sm font-medium text-blue-800 mb-3">Financial Information:</p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-blue-700 mb-1">Total Cost ($)</label>
+                      <label className="block text-xs font-medium text-blue-700 mb-1">Estimate ($)</label>
                       <input
                         type="number"
                         step="0.01"
@@ -985,7 +985,7 @@ const ServiceReports = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-xs font-medium text-blue-700 mb-1">Parts Cost ($)</label>
+                      <label className="block text-xs font-medium text-blue-700 mb-1">Cost of Services ($)</label>
                       <input
                         type="number"
                         step="0.01"
