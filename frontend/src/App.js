@@ -396,6 +396,9 @@ const ServiceReports = () => {
     setPhotos([]);
     setEmployeeNotes('');
     setAdminNotes('');
+    setTotalCost('');
+    setPartsCost('');
+    setGrossProfit('');
     setEditingReport(null);
   };
 
