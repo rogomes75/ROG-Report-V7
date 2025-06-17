@@ -144,7 +144,11 @@ async def startup_event():
         await db.users.insert_one(admin_user_data)
         logging.info("Admin user created")
 
-# Auth routes
+# Add your routes to the router instead of directly to app
+@api_router.get("/")
+async def root():
+    return {"message": "Pool Maintenance API", "timezone": "America/Los_Angeles"}
+
 @api_router.post("/auth/login")
 async def login(user_data: UserLogin):
     user = await db.users.find_one({"username": user_data.username})
