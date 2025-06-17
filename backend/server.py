@@ -105,6 +105,9 @@ class ServiceReportUpdate(BaseModel):
     description: Optional[str] = None
     priority: Optional[str] = None
     photos: Optional[List[str]] = None
+    total_cost: Optional[float] = None
+    parts_cost: Optional[float] = None
+    gross_profit: Optional[float] = None
 
 # Helper functions
 def create_access_token(data: dict):
