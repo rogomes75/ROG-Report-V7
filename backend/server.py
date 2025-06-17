@@ -51,7 +51,7 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
     role: str  # "admin" or "employee"
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=get_la_time)
 
 class UserCreate(BaseModel):
     username: str
