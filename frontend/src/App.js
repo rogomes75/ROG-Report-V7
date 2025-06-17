@@ -890,7 +890,151 @@ const ServiceReports = () => {
   );
 };
 
-// Clients Management Component
+// Services Concluded Component
+const ServicesConcluded = () => {
+  const { user } = useAuth();
+  const [reports, setReports] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchConcludedReports();
+    fetchClients();
+  }, []);
+
+  const fetchConcludedReports = async () => {
+    try {
+      const response = await axios.get(`${API}/reports`);
+      // Filter only completed reports
+      const completedReports = response.data.filter(report => report.status === 'completed');
+      setReports(completedReports);
+    } catch (error) {
+      console.error('Failed to fetch concluded reports:', error);
+    }
+  };
+
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get(`${API}/clients`);
+      setClients(response.data);
+    } catch (error) {
+      console.error('Failed to fetch clients:', error);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    return 'bg-green-100 text-green-800'; // All concluded are completed
+  };
+
+  const getPriorityColor = (priority) => {
+    const colors = {
+      'URGENT': 'bg-red-100 text-red-800',
+      'SAME WEEK': 'bg-orange-100 text-orange-800',
+      'NEXT WEEK': 'bg-blue-100 text-blue-800'
+    };
+    return colors[priority] || 'bg-gray-100 text-gray-800';
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Services Concluded</h2>
+        <div className="text-sm text-gray-600">
+          Total completed: {reports.length}
+        </div>
+      </div>
+
+      {/* Reports List */}
+      <div className="space-y-4 sm:space-y-6">
+        {reports.map(report => (
+          <div key={report.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-green-500">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                <p className="text-gray-600 text-sm sm:text-base">By: {report.employee_name}</p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Created: {formatLATime(report.request_date)} at {report.created_time || formatLATimeOnly(report.request_date)}
+                </p>
+                {report.completion_date && (
+                  <p className="text-xs sm:text-sm text-green-600 font-medium">
+                    ✅ Completed: {formatLADateTime(report.completion_date)}
+                  </p>
+                )}
+                {report.last_modified && (
+                  <p className="text-xs text-gray-400">
+                    Last modified: {formatLADateTime(report.last_modified)}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPriorityColor(report.priority)}`}>
+                  {report.priority}
+                </span>
+                <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
+                  COMPLETED
+                </span>
+              </div>
+            </div>
+
+            <p className="text-gray-700 mb-4 text-sm sm:text-base">{report.description}</p>
+
+            {report.employee_notes && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm font-medium text-blue-800 mb-1">Employee Notes:</p>
+                <p className="text-blue-700 text-sm">{report.employee_notes}</p>
+              </div>
+            )}
+
+            {report.admin_notes && (
+              <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                <p className="text-sm font-medium text-green-800 mb-1">Admin Notes:</p>
+                <p className="text-green-700 text-sm">{report.admin_notes}</p>
+              </div>
+            )}
+
+            {report.photos && report.photos.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-4">
+                {report.photos.map((photo, index) => (
+                  <img
+                    key={index}
+                    src={photo}
+                    alt={`Report photo ${index + 1}`}
+                    className="w-full h-20 sm:h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition"
+                    onClick={() => window.open(photo, '_blank')}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Modification History */}
+            {report.modification_history && report.modification_history.length > 0 && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-700 mb-2">Service History:</p>
+                <div className="space-y-1">
+                  {report.modification_history.map((mod, index) => (
+                    <p key={index} className="text-xs text-gray-600">
+                      {formatLADateTime(mod.modified_at)} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {reports.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-4xl sm:text-6xl mb-4">✅</div>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No concluded services yet</h3>
+          <p className="text-gray-600 text-sm sm:text-base px-4">
+            Completed service reports will appear here.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 const ClientsManagement = () => {
   const [clients, setClients] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
