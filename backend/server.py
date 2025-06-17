@@ -86,7 +86,11 @@ class ServiceReportCreate(BaseModel):
 class ServiceReportUpdate(BaseModel):
     status: Optional[str] = None
     admin_notes: Optional[str] = None
+    employee_notes: Optional[str] = None
     completion_date: Optional[datetime] = None
+    description: Optional[str] = None
+    priority: Optional[str] = None
+    photos: Optional[List[str]] = None
 
 # Helper functions
 def create_access_token(data: dict):
