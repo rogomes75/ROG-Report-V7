@@ -452,6 +452,11 @@ const ServiceReports = () => {
 
       if (user?.role === 'admin') {
         updateData.admin_notes = adminNotes;
+        if (totalCost) updateData.total_cost = parseFloat(totalCost);
+        if (partsCost) updateData.parts_cost = parseFloat(partsCost);
+        if (totalCost && partsCost) {
+          updateData.gross_profit = parseFloat(totalCost) - parseFloat(partsCost);
+        }
       }
 
       await axios.put(`${API}/reports/${editingReport.id}`, updateData);
