@@ -990,7 +990,7 @@ const ServiceReports = () => {
   );
 };
 
-// Services Concluded Component
+// Services Completed Component
 const ServicesConcluded = () => {
   const { user } = useAuth();
   const [reports, setReports] = useState([]);
@@ -998,18 +998,18 @@ const ServicesConcluded = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchConcludedReports();
+    fetchCompletedReports();
     fetchClients();
   }, []);
 
-  const fetchConcludedReports = async () => {
+  const fetchCompletedReports = async () => {
     try {
       const response = await axios.get(`${API}/reports`);
       // Filter only completed reports
       const completedReports = response.data.filter(report => report.status === 'completed');
       setReports(completedReports);
     } catch (error) {
-      console.error('Failed to fetch concluded reports:', error);
+      console.error('Failed to fetch completed reports:', error);
     }
   };
 
