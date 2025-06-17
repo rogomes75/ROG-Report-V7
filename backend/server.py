@@ -289,10 +289,33 @@ async def get_service_reports(current_user: User = Depends(get_current_user)):
 
 @api_router.put("/reports/{report_id}", response_model=ServiceReport)
 async def update_service_report(report_id: str, update_data: ServiceReportUpdate, current_user: User = Depends(get_current_user)):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Only admin can update reports")
+    # Get the existing report
+    existing_report = await db.service_reports.find_one({"id": report_id})
+    if not existing_report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    
+    # Check permissions - admin can edit all, employee can edit their own
+    if current_user.role != "admin" and existing_report["employee_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only edit your own reports")
     
     update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
+    
+    # Add modification tracking
+    if update_dict:
+        modification_entry = {
+            "modified_by": current_user.username,
+            "modified_by_role": current_user.role,
+            "modified_at": datetime.utcnow(),
+            "modified_time": datetime.utcnow().strftime("%H:%M"),
+            "changes": list(update_dict.keys())
+        }
+        
+        # Get current modification history or initialize empty list
+        current_history = existing_report.get("modification_history", [])
+        current_history.append(modification_entry)
+        
+        update_dict["modification_history"] = current_history
+        update_dict["last_modified"] = datetime.utcnow()
     
     result = await db.service_reports.update_one(
         {"id": report_id},
