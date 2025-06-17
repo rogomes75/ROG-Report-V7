@@ -1092,6 +1092,27 @@ const ServicesConcluded = () => {
               </div>
             )}
 
+            {/* Financial Information (Admin Only) */}
+            {user?.role === 'admin' && (report.total_cost > 0 || report.parts_cost > 0) && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm font-medium text-blue-800 mb-2">Financial Summary:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-blue-700">Total Cost: </span>
+                    <span className="font-medium">${report.total_cost?.toFixed(2) || '0.00'}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700">Parts Cost: </span>
+                    <span className="font-medium">${report.parts_cost?.toFixed(2) || '0.00'}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700">Gross Profit: </span>
+                    <span className="font-medium">${((report.total_cost || 0) - (report.parts_cost || 0)).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {report.photos && report.photos.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-4">
                 {report.photos.map((photo, index) => (
