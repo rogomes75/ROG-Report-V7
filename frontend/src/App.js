@@ -432,6 +432,9 @@ const ServiceReports = () => {
     setPhotos(report.photos || []);
     setEmployeeNotes(report.employee_notes || '');
     setAdminNotes(report.admin_notes || '');
+    setTotalCost(report.total_cost?.toString() || '');
+    setPartsCost(report.parts_cost?.toString() || '');
+    setGrossProfit(report.gross_profit?.toString() || '');
     setShowEditForm(true);
   };
 
