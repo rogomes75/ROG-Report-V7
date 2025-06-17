@@ -734,7 +734,7 @@ const ServiceReports = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Total Cost ($)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Estimate ($)</label>
                       <input
                         type="number"
                         step="0.01"
@@ -751,7 +751,7 @@ const ServiceReports = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Parts Cost ($)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Cost of Services ($)</label>
                       <input
                         type="number"
                         step="0.01"
