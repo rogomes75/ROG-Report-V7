@@ -143,9 +143,8 @@ const Login = () => {
 };
 
 // Navigation Component
-const Navigation = () => {
+const Navigation = ({ activeTab, setActiveTab }) => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('reports');
 
   return (
     <nav className="bg-white shadow-lg">
