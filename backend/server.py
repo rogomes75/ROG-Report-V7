@@ -78,6 +78,7 @@ class ServiceReport(BaseModel):
     employee_name: str
     description: str
     photos: List[str] = []  # base64 encoded images
+    videos: List[str] = []  # base64 encoded videos
     priority: str  # "URGENT", "SAME WEEK", "NEXT WEEK"
     status: str = "reported"  # "reported", "scheduled", "in_progress", "completed"
     request_date: datetime = Field(default_factory=get_la_time)
