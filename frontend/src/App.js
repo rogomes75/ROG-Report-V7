@@ -166,11 +166,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <img 
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDQwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjgwIiBjeT0iNzUiIHI9IjUwIiBzdHJva2U9IiMzMTc0QkIiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIvPgo8cGF0aCBkPSJNNDUgNzVDNDUgNzUgNTUgNjAgNzAgNjBDODUgNjAgOTUgNzUgOTUgNzVDOTUgNzUgODUgOTAgNzAgOTBDNTUgOTAgNDUgNzUgNDUgNzVaIiBmaWxsPSIjMzE3NEJCIi8+CjxwYXRoIGQ9Ik02MCA2NUM2MCA2NSA2NSA1NSA3NSA1NUM4NSA1NSA5MCA2NSA5MCA2NSIgc3Ryb2tlPSIjMzE3NEJCIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTYwIDg1QzYwIDg1IDY1IDk1IDc1IDk1Qzg1IDk1IDkwIDg1IDkwIDg1IiBzdHJva2U9IiMzMTc0QkIiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPgo8dGV4dCB4PSIxMzAiIHk9IjY1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMzE3NEJCIj5ST0c8L3RleHQ+Cjx0ZXh0IHg9IjEzMCIgeT0iOTUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzMxNzRCQiI+UG9vbCBTZXJ2aWNlPC90ZXh0Pgo8L3N2Zz4=" 
-              alt="ROG Pool Service" 
-              className="h-12 w-auto sm:h-14"
-            />
+            <h1 className="text-lg sm:text-2xl font-bold text-blue-600">ROG Pool Service</h1>
             <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase">
               {user?.role}
             </span>
