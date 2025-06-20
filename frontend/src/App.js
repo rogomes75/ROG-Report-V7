@@ -1023,7 +1023,7 @@ const ServiceReports = () => {
             )}
 
             {/* Modification History (for all users) */}
-            {report.modification_history && report.modification_history.length > 0 && (
+            {(user?.role !== 'admin') && report.modification_history && report.modification_history.length > 0 && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                 <p className="text-sm font-medium text-gray-700 mb-2">Service History:</p>
                 <div className="space-y-1">
