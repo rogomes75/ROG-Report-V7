@@ -1167,6 +1167,68 @@ const ServiceReports = () => {
                   ))}
                 </div>
 
+                {/* Financial Fields */}
+                <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm font-medium text-blue-800 mb-3">Financial Information:</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-blue-700 mb-1">Estimate ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={report.total_cost || ''}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          const updatedReports = filteredReports.map(r => 
+                            r.id === report.id ? { ...r, total_cost: parseFloat(newValue) || 0 } : r
+                          );
+                          setFilteredReports(updatedReports);
+                          
+                          clearTimeout(window.financialTimeout);
+                          window.financialTimeout = setTimeout(() => {
+                            updateFinancialField(report.id, 'total_cost', parseFloat(newValue) || 0);
+                          }, 1000);
+                        }}
+                        className="w-full px-2 py-1 border border-blue-300 rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-blue-700 mb-1">Est. Cost ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={report.parts_cost || ''}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          const updatedReports = filteredReports.map(r => 
+                            r.id === report.id ? { ...r, parts_cost: parseFloat(newValue) || 0 } : r
+                          );
+                          setFilteredReports(updatedReports);
+                          
+                          clearTimeout(window.financialTimeout);
+                          window.financialTimeout = setTimeout(() => {
+                            updateFinancialField(report.id, 'parts_cost', parseFloat(newValue) || 0);
+                          }, 1000);
+                        }}
+                        className="w-full px-2 py-1 border border-blue-300 rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-blue-700 mb-1">Gross Profit ($)</label>
+                      <input
+                        type="text"
+                        value={`${((report.total_cost || 0) - (report.parts_cost || 0)).toFixed(2)}`}
+                        readOnly
+                        className="w-full px-2 py-1 border border-blue-300 rounded bg-blue-100 text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Admin Notes:</label>
                   <textarea
