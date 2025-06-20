@@ -450,6 +450,10 @@ const ServiceReports = () => {
     });
   };
 
+  const removePhoto = (index) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleVideoUpload = (e) => {
     const files = Array.from(e.target.files);
     if (videos.length + files.length > 2) {
