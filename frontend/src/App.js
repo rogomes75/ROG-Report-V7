@@ -337,11 +337,14 @@ const Navigation = ({ activeTab, setActiveTab }) => {
 const ServiceReports = () => {
   const { user } = useAuth();
   const [reports, setReports] = useState([]);
+  const [filteredReports, setFilteredReports] = useState([]);
   const [clients, setClients] = useState([]);
+  const [users, setUsers] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingReport, setEditingReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedUserFilter, setSelectedUserFilter] = useState('');
 
   // Form states
   const [selectedClient, setSelectedClient] = useState('');
@@ -357,7 +360,24 @@ const ServiceReports = () => {
   useEffect(() => {
     fetchReports();
     fetchClients();
+    if (user?.role === 'admin') {
+      fetchUsers();
+    }
   }, []);
+
+  useEffect(() => {
+    filterReports();
+  }, [reports, selectedUserFilter]);
+
+  const filterReports = () => {
+    let filtered = reports;
+    
+    if (selectedUserFilter) {
+      filtered = filtered.filter(report => report.employee_id === selectedUserFilter);
+    }
+    
+    setFilteredReports(filtered);
+  };
 
   const fetchReports = async () => {
     try {
@@ -367,6 +387,15 @@ const ServiceReports = () => {
       setReports(activeReports);
     } catch (error) {
       console.error('Failed to fetch reports:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${API}/users`);
+      setUsers(response.data.filter(u => u.role === 'employee'));
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
     }
   };
 
