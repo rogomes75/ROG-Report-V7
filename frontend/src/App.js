@@ -371,9 +371,12 @@ const ServiceReports = () => {
 
   // Form states
   const [selectedClient, setSelectedClient] = useState('');
+  const [manualClient, setManualClient] = useState({ name: '', address: '' });
+  const [useManualClient, setUseManualClient] = useState(false);
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('SAME WEEK');
   const [photos, setPhotos] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [employeeNotes, setEmployeeNotes] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
   const [totalCost, setTotalCost] = useState('');
