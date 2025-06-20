@@ -6,6 +6,10 @@ import moment from 'moment-timezone';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Debug logging
+console.log('BACKEND_URL:', BACKEND_URL);
+console.log('API URL:', API);
+
 // Utility function to format LA time - Fixed timezone issue
 const formatLATime = (date) => {
   return moment.utc(date).tz('America/Los_Angeles').format('MM/DD/YYYY');
