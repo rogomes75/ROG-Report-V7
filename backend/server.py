@@ -72,6 +72,7 @@ class ServiceReport(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_id: str
     client_name: str
+    client_address: str = ""
     employee_id: str
     employee_name: str
     description: str
