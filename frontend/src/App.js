@@ -816,6 +816,41 @@ const ServiceReports = () => {
                 )}
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Videos ({videos.length}/2)
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept="video/*"
+                  capture="environment"
+                  onChange={handleVideoUpload}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                />
+                
+                {videos.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+                    {videos.map((video, index) => (
+                      <div key={index} className="relative">
+                        <video
+                          src={video}
+                          className="w-full h-32 object-cover rounded-lg"
+                          controls
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeVideo(index)}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs sm:text-sm"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
                 <button
                   type="submit"
