@@ -697,22 +697,64 @@ const ServiceReports = () => {
             <h3 className="text-xl sm:text-2xl font-bold mb-4">Create Service Report</h3>
             
             <form onSubmit={handleCreateReport} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
-                <select
-                  value={selectedClient}
-                  onChange={(e) => setSelectedClient(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
-                  required
-                >
-                  <option value="">Select a client</option>
-                  {clients.map(client => (
-                    <option key={client.id} value={client.id}>
-                      {client.name} - {client.address}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Client Selection or Manual Entry */}
+              {user?.role === 'admin' && (
+                <div className="mb-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={useManualClient}
+                      onChange={(e) => setUseManualClient(e.target.checked)}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Enter client manually</span>
+                  </label>
+                </div>
+              )}
+
+              {useManualClient && user?.role === 'admin' ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
+                    <input
+                      type="text"
+                      value={manualClient.name}
+                      onChange={(e) => setManualClient({...manualClient, name: e.target.value})}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                      placeholder="Enter client name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Client Address</label>
+                    <input
+                      type="text"
+                      value={manualClient.address}
+                      onChange={(e) => setManualClient({...manualClient, address: e.target.value})}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                      placeholder="Enter client address"
+                      required
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
+                  <select
+                    value={selectedClient}
+                    onChange={(e) => setSelectedClient(e.target.value)}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                    required={!useManualClient}
+                  >
+                    <option value="">Select a client</option>
+                    {clients.map(client => (
+                      <option key={client.id} value={client.id}>
+                        {client.name} - {client.address}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
