@@ -1025,26 +1025,7 @@ const ServiceReports = () => {
               </div>
             )}
 
-            {/* Financial Information (Admin Only) */}
-            {user?.role === 'admin' && (report.total_cost > 0 || report.parts_cost > 0) && (
-              <div className="mb-4 p-3 bg-green-50 rounded-lg">
-                <p className="text-sm font-medium text-green-800 mb-2">Financial Summary:</p>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <span className="text-green-700">Estimate: </span>
-                    <span className="font-medium">${report.total_cost?.toFixed(2) || '0.00'}</span>
-                  </div>
-                  <div>
-                    <span className="text-green-700">Cost of Services: </span>
-                    <span className="font-medium">${report.parts_cost?.toFixed(2) || '0.00'}</span>
-                  </div>
-                  <div>
-                    <span className="text-green-700">Gross Profit: </span>
-                    <span className="font-medium">${((report.total_cost || 0) - (report.parts_cost || 0)).toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Financial Information (Admin Only) - REMOVED FROM SERVICE REPORTS */}
 
             {/* Modification History (for all users) */}
             {(user?.role !== 'admin') && report.modification_history && report.modification_history.length > 0 && (
