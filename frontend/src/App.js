@@ -1224,7 +1224,7 @@ const ServicesConcluded = () => {
           </div>
         </div>
         
-        {/* Search Filters */}
+        {/* Search Filters - Remove employee search for users */}
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <input
             type="text"
@@ -1233,13 +1233,15 @@ const ServicesConcluded = () => {
             onChange={(e) => setSearchClient(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
           />
-          <input
-            type="text"
-            placeholder="Search by employee..."
-            value={searchEmployee}
-            onChange={(e) => setSearchEmployee(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-          />
+          {user?.role === 'admin' && (
+            <input
+              type="text"
+              placeholder="Search by employee..."
+              value={searchEmployee}
+              onChange={(e) => setSearchEmployee(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          )}
         </div>
       </div>
 
