@@ -1617,6 +1617,43 @@ const ClientsManagement = () => {
     }
   };
 
+  const handleCreateClient = async (e) => {
+    e.preventDefault();
+    if (!newClient.name.trim() || !newClient.address.trim()) {
+      alert('Please fill in both name and address');
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      // Check for duplicate
+      const duplicate = clients.find(client => 
+        client.name.toLowerCase().trim() === newClient.name.toLowerCase().trim() &&
+        client.address.toLowerCase().trim() === newClient.address.toLowerCase().trim()
+      );
+      
+      if (duplicate) {
+        alert('A client with this name and address already exists!');
+        setIsCreating(false);
+        return;
+      }
+
+      await axios.post(`${API}/clients`, {
+        name: newClient.name.trim(),
+        address: newClient.address.trim()
+      });
+      
+      fetchClients();
+      setShowAddClient(false);
+      setNewClient({ name: '', address: '' });
+      alert('Client created successfully!');
+    } catch (error) {
+      console.error('Failed to create client:', error);
+      alert('Failed to create client');
+    }
+    setIsCreating(false);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
