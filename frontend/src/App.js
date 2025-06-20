@@ -1116,6 +1116,19 @@ const ServiceReports = () => {
               </div>
             )}
 
+            {report.videos && report.videos.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                {report.videos.map((video, index) => (
+                  <video
+                    key={index}
+                    src={video}
+                    className="w-full h-32 object-cover rounded-lg"
+                    controls
+                  />
+                ))}
+              </div>
+            )}
+
             {/* Edit Button */}
             {(user?.role === 'admin' || report.employee_id === user?.id) && (
               <div className="mb-4">
