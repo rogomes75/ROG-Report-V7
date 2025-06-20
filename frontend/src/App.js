@@ -1433,11 +1433,17 @@ const ServicesConcluded = () => {
 };
 const ClientsManagement = () => {
   const [clients, setClients] = useState([]);
+  const [users, setUsers] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
+  const [selectedUser, setSelectedUser] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchClients();
+    if (user?.role === 'admin') {
+      fetchUsers();
+    }
   }, []);
 
   const fetchClients = async () => {
@@ -1449,13 +1455,30 @@ const ClientsManagement = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${API}/users`);
+      setUsers(response.data.filter(u => u.role === 'employee'));
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
+
   const handleExcelUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    if (user?.role === 'admin' && !selectedUser) {
+      alert('Please select a user to import clients for');
+      return;
+    }
+
     setIsUploading(true);
     const formData = new FormData();
     formData.append('file', file);
+    if (user?.role === 'admin' && selectedUser) {
+      formData.append('employee_id', selectedUser);
+    }
 
     try {
       const response = await axios.post(`${API}/clients/import-excel`, formData, {
@@ -1464,6 +1487,7 @@ const ClientsManagement = () => {
       alert(response.data.message);
       fetchClients();
       setShowUpload(false);
+      setSelectedUser('');
     } catch (error) {
       console.error('Failed to upload Excel:', error);
       alert('Failed to import Excel file. Make sure it has "Name" and "Address" columns.');
