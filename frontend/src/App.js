@@ -1431,7 +1431,37 @@ const ServicesConcluded = () => {
           <div key={report.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-green-500">
             <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
               <div className="flex-1">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                    {user?.role === 'admin' && (
+                      <button
+                        onClick={() => deleteReport(report.id)}
+                        className="text-red-600 hover:text-red-800 p-1"
+                        title="Delete Report"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-row items-center space-x-2">
+                    <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPriorityColor(report.priority)}`}>
+                      {report.priority}
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
+                        COMPLETED
+                      </span>
+                      {report.completion_date && (
+                        <span className="text-xs text-green-600 font-medium">
+                          {formatLADateTime(report.completion_date)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 {report.client_address && (
                   <p className="text-xs sm:text-sm text-gray-500">{report.client_address}</p>
                 )}
@@ -1439,34 +1469,10 @@ const ServicesConcluded = () => {
                 <p className="text-xs sm:text-sm text-gray-500">
                   Created: {formatLATime(report.request_date)} at {report.created_time || formatLATimeOnly(report.request_date)}
                 </p>
-                {report.completion_date && (
-                  <p className="text-xs sm:text-sm text-green-600 font-medium">
-                    ✅ Completed: {formatLADateTime(report.completion_date)}
-                  </p>
-                )}
                 {report.last_modified && (
                   <p className="text-xs text-gray-400">
                     Last modified: {formatLADateTime(report.last_modified)}
                   </p>
-                )}
-              </div>
-              <div className="flex flex-row items-center space-x-2 justify-end">
-                <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPriorityColor(report.priority)}`}>
-                  {report.priority}
-                </span>
-                <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
-                  COMPLETED
-                </span>
-                {user?.role === 'admin' && (
-                  <button
-                    onClick={() => deleteReport(report.id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-xs font-medium transition flex items-center space-x-1"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    <span>Delete</span>
-                  </button>
                 )}
               </div>
             </div>
