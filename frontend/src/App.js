@@ -1543,6 +1543,9 @@ const ClientsManagement = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [showAddClient, setShowAddClient] = useState(false);
+  const [newClient, setNewClient] = useState({ name: '', address: '' });
+  const [isCreating, setIsCreating] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
