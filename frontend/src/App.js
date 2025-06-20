@@ -476,11 +476,6 @@ const ServiceReports = () => {
     setPhotos([]);
     setVideos([]);
     setEmployeeNotes('');
-    setAdminNotes('');
-    setTotalCost('');
-    setPartsCost('');
-    setGrossProfit('');
-    setEditingReport(null);
   };
 
   const handleCreateReport = async (e) => {
