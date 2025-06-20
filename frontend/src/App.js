@@ -1159,7 +1159,7 @@ const ServiceReports = () => {
         ))}
       </div>
 
-      {reports.length === 0 && (
+      {filteredReports.length === 0 && (
         <div className="text-center py-12">
           <div className="text-4xl sm:text-6xl mb-4">🏊‍♂️</div>
           <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No service reports yet</h3>
