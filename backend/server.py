@@ -228,7 +228,7 @@ async def delete_client(client_id: str, current_user: User = Depends(get_current
     return {"message": "Client deleted successfully"}
 
 @api_router.post("/clients/import-excel")
-async def import_clients_excel(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+async def import_clients_excel(employee_id: str = Form(None), file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Only admin can import clients")
     
@@ -243,6 +243,7 @@ async def import_clients_excel(file: UploadFile = File(...), current_user: User 
                 "id": str(uuid.uuid4()),
                 "name": str(row['Name']) if 'Name' in row else str(row['name']),
                 "address": str(row['Address']) if 'Address' in row else str(row['address']),
+                "employee_id": employee_id,  # Assign to specific employee
                 "created_at": get_la_time()
             }
             clients_data.append(client_data)
@@ -256,7 +257,21 @@ async def import_clients_excel(file: UploadFile = File(...), current_user: User 
 
 @api_router.get("/clients", response_model=List[Client])
 async def get_clients(current_user: User = Depends(get_current_user)):
-    clients = await db.clients.find().sort("name", 1).to_list(1000)  # Alphabetical order
+    if current_user.role == "admin":
+        # Admin sees all clients
+        clients = await db.clients.find().sort("name", 1).to_list(1000)
+    else:
+        # Employee sees only their assigned clients
+        clients = await db.clients.find({"employee_id": current_user.id}).sort("name", 1).to_list(1000)
+    
+    return [Client(**client) for client in clients]
+
+@api_router.get("/clients/all", response_model=List[Client])
+async def get_all_clients(current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admin can access all clients")
+    
+    clients = await db.clients.find().sort("name", 1).to_list(1000)
     return [Client(**client) for client in clients]
 
 @api_router.post("/clients", response_model=Client)
