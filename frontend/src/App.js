@@ -3,12 +3,13 @@ import './App.css';
 import axios from 'axios';
 import moment from 'moment-timezone';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API = `/api`;
 
 // Debug logging
 console.log('BACKEND_URL:', BACKEND_URL);
 console.log('API URL:', API);
+console.log('Using proxy setup for API calls');
 
 // Utility function to format LA time - Fixed timezone issue
 const formatLATime = (date) => {
