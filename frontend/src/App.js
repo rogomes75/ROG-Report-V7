@@ -334,7 +334,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
               
               <button
                 onClick={logout}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition text-left mt-4"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition text-left mt-4"
               >
                 Logout
               </button>
