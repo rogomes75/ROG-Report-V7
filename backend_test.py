@@ -416,7 +416,6 @@ if admin_headers:
             test_username = f"dbtest_{uuid.uuid4().hex[:8]}"
             user_data = {
                 "username": test_username,
-                "email": f"{test_username}@example.com",
                 "password": "testpassword123",
                 "role": "employee"
             }
