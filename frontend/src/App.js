@@ -1784,7 +1784,174 @@ const UsersManagement = () => {
   );
 };
 
-// Main Dashboard Component
+// Calendar Component with Gross Profit
+const Calendar = () => {
+  const [monthlyData, setMonthlyData] = useState({});
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchYearlyData();
+  }, [selectedYear]);
+
+  const fetchYearlyData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${API}/reports`);
+      const completedReports = response.data.filter(report => 
+        report.status === 'completed' && 
+        new Date(report.completion_date).getFullYear() === selectedYear
+      );
+
+      const monthData = {};
+      
+      // Initialize all months
+      for (let month = 0; month < 12; month++) {
+        monthData[month] = {};
+        const daysInMonth = new Date(selectedYear, month + 1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+          monthData[month][day] = 0;
+        }
+      }
+
+      // Calculate daily profits
+      completedReports.forEach(report => {
+        if (report.completion_date && report.total_cost && report.parts_cost) {
+          const date = new Date(report.completion_date);
+          const month = date.getMonth();
+          const day = date.getDate();
+          const profit = (report.total_cost || 0) - (report.parts_cost || 0);
+          
+          if (monthData[month] && monthData[month][day] !== undefined) {
+            monthData[month][day] += profit;
+          }
+        }
+      });
+
+      setMonthlyData(monthData);
+    } catch (error) {
+      console.error('Failed to fetch yearly data:', error);
+    }
+    setIsLoading(false);
+  };
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const getDayOfWeek = (year, month, day) => {
+    return new Date(year, month, day).getDay();
+  };
+
+  const renderMonth = (monthIndex) => {
+    const daysInMonth = new Date(selectedYear, monthIndex + 1, 0).getDate();
+    const firstDayOfWeek = getDayOfWeek(selectedYear, monthIndex, 1);
+    const days = [];
+
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      days.push(<div key={`empty-${i}`} className="h-16"></div>);
+    }
+
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayOfWeek = getDayOfWeek(selectedYear, monthIndex, day);
+      const profit = monthlyData[monthIndex]?.[day] || 0;
+      const isSunday = dayOfWeek === 0;
+
+      days.push(
+        <div
+          key={day}
+          className={`h-16 border border-gray-200 p-1 flex flex-col justify-between ${
+            isSunday ? 'bg-red-50' : 'bg-white'
+          } hover:bg-gray-50 transition-colors`}
+        >
+          <div className={`text-sm font-medium ${isSunday ? 'text-red-600' : 'text-gray-800'}`}>
+            {day}
+          </div>
+          {profit > 0 && (
+            <div className="text-xs text-green-600 font-medium">
+              ${profit.toFixed(0)}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+          {monthNames[monthIndex]} {selectedYear}
+        </h3>
+        
+        {/* Day headers */}
+        <div className="grid grid-cols-7 gap-0 mb-2">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="h-8 flex items-center justify-center text-sm font-medium text-gray-600 bg-gray-100">
+              {day}
+            </div>
+          ))}
+        </div>
+        
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-0 border border-gray-200">
+          {days}
+        </div>
+      </div>
+    );
+  };
+
+  const calculateYearlyTotal = () => {
+    let total = 0;
+    Object.values(monthlyData).forEach(month => {
+      Object.values(month).forEach(dayProfit => {
+        total += dayProfit;
+      });
+    });
+    return total;
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Profit Calendar</h2>
+          <p className="text-gray-600 mt-1">Daily gross profit from completed services</p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-lg font-semibold text-green-600">
+            Year Total: ${calculateYearlyTotal().toFixed(2)}
+          </div>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          >
+            {Array.from({length: 5}, (_, i) => new Date().getFullYear() - 2 + i).map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="text-xl text-gray-600">Loading calendar data...</div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {monthNames.map((_, index) => renderMonth(index))}
+        </div>
+      )}
+      
+      <div className="mt-6 text-center text-sm text-gray-500">
+        <p>Red background indicates Sundays. Gross profit shown for days with completed services.</p>
+      </div>
+    </div>
+  );
+};
 const Dashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('reports');
