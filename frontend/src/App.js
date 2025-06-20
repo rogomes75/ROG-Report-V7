@@ -1274,19 +1274,42 @@ const ServicesConcluded = () => {
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Services Completed</h2>
-        <div className="text-sm text-gray-600">
-          Total completed: {reports.length}
+        <div className="flex-1">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Services Completed</h2>
+          <div className="text-sm text-gray-600 mt-1">
+            Total completed: {filteredReports.length}
+          </div>
+        </div>
+        
+        {/* Search Filters */}
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Search by client name..."
+            value={searchClient}
+            onChange={(e) => setSearchClient(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+          <input
+            type="text"
+            placeholder="Search by employee..."
+            value={searchEmployee}
+            onChange={(e) => setSearchEmployee(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          />
         </div>
       </div>
 
       {/* Reports List */}
       <div className="space-y-4 sm:space-y-6">
-        {reports.map(report => (
+        {filteredReports.map(report => (
           <div key={report.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-green-500">
             <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
               <div className="flex-1">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                {report.client_address && (
+                  <p className="text-xs sm:text-sm text-gray-500">{report.client_address}</p>
+                )}
                 <p className="text-gray-600 text-sm sm:text-base">By: {report.employee_name}</p>
                 <p className="text-xs sm:text-sm text-gray-500">
                   Created: {formatLATime(report.request_date)} at {report.created_time || formatLATimeOnly(report.request_date)}
@@ -1309,10 +1332,21 @@ const ServicesConcluded = () => {
                 <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
                   COMPLETED
                 </span>
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={() => deleteReport(report.id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-xs font-medium transition"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
 
-            <p className="text-gray-700 mb-4 text-sm sm:text-base">{report.description}</p>
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-1">Description:</p>
+              <p className="text-gray-700 text-sm sm:text-base">{report.description}</p>
+            </div>
 
             {report.employee_notes && (
               <div className="mb-4 p-3 bg-blue-50 rounded-lg">
