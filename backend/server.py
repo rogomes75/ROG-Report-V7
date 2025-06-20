@@ -176,10 +176,17 @@ async def root():
 
 @api_router.post("/auth/login")
 async def login(user_data: UserLogin):
+    logging.info(f"Login attempt for username: {user_data.username}")
     user = await db.users.find_one({"username": user_data.username})
-    if not user or not verify_password(user_data.password, user["password_hash"]):
+    if not user:
+        logging.warning(f"User not found: {user_data.username}")
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
+    if not verify_password(user_data.password, user["password_hash"]):
+        logging.warning(f"Invalid password for user: {user_data.username}")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    logging.info(f"Successful login for user: {user_data.username}")
     access_token = create_access_token(data={"sub": user["username"], "role": user["role"]})
     return {
         "access_token": access_token,
