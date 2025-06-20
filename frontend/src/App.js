@@ -555,13 +555,26 @@ const ServiceReports = () => {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      'URGENT': 'bg-red-100 text-red-800',
-      'SAME WEEK': 'bg-orange-100 text-orange-800',
-      'NEXT WEEK': 'bg-blue-100 text-blue-800'
-    };
-    return colors[priority] || 'bg-gray-100 text-gray-800';
+  const getReportPeriod = () => {
+    if (filteredReports.length === 0) return 'No reports';
+    
+    const dates = filteredReports.map(r => new Date(r.request_date));
+    const minDate = new Date(Math.min(...dates));
+    const maxDate = new Date(Math.max(...dates));
+    
+    if (minDate.toDateString() === maxDate.toDateString()) {
+      return formatLATime(minDate);
+    }
+    
+    return `${formatLATime(minDate)} - ${formatLATime(maxDate)}`;
+  };
+
+  const isReportOverdue = (report) => {
+    const reportDate = new Date(report.request_date);
+    const now = new Date();
+    const diffTime = Math.abs(now - reportDate);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 5 && report.status !== 'completed';
   };
 
   return (
