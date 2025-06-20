@@ -1528,6 +1528,24 @@ const ClientsManagement = () => {
             <p className="text-gray-600 mb-4 text-sm sm:text-base">
               Excel file should have columns named "Name" and "Address"
             </p>
+            
+            {user?.role === 'admin' && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Assign to User:</label>
+                <select
+                  value={selectedUser}
+                  onChange={(e) => setSelectedUser(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  required
+                >
+                  <option value="">Select a user</option>
+                  {users.map(user => (
+                    <option key={user.id} value={user.id}>{user.username}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
             <input
               type="file"
               accept=".xlsx,.xls"
