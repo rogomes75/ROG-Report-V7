@@ -284,6 +284,7 @@ async def create_service_report(report_data: ServiceReportCreate, current_user: 
     report_dict = report_data.dict()
     report_dict["id"] = str(uuid.uuid4())
     report_dict["client_name"] = client["name"]
+    report_dict["client_address"] = client["address"]
     report_dict["employee_id"] = current_user.id
     report_dict["employee_name"] = current_user.username
     report_dict["status"] = "reported"
