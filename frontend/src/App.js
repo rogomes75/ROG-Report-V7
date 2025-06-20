@@ -1531,6 +1531,22 @@ const ServicesConcluded = () => {
               </div>
             )}
 
+            {/* Admin Notes for Users (Read-only) in Services Completed */}
+            {user?.role !== 'admin' && report.admin_notes && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-700 mb-1">Admin Notes:</p>
+                <p className="text-gray-700 text-sm">{report.admin_notes}</p>
+              </div>
+            )}
+
+            {/* Admin Notes for Admin (with all data) */}
+            {user?.role === 'admin' && report.admin_notes && (
+              <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                <p className="text-sm font-medium text-green-800 mb-1">Admin Notes:</p>
+                <p className="text-green-700 text-sm">{report.admin_notes}</p>
+              </div>
+            )}
+
             {/* Modification History */}
             {report.modification_history && report.modification_history.length > 0 && (
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
