@@ -1658,12 +1658,20 @@ const ClientsManagement = () => {
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Clients Management</h2>
-        <button
-          onClick={() => setShowUpload(true)}
-          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
-        >
-          Import Excel
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => setShowUpload(true)}
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
+          >
+            📊 Import Excel
+          </button>
+          <button
+            onClick={() => setShowAddClient(true)}
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
+          >
+            ➕ Add Customer
+          </button>
+        </div>
       </div>
 
       {/* Upload Modal */}
