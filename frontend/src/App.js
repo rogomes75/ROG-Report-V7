@@ -1736,6 +1736,7 @@ const UsersManagement = () => {
 const Calendar = () => {
   const [monthlyData, setMonthlyData] = useState({});
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -1748,7 +1749,8 @@ const Calendar = () => {
       const response = await axios.get(`${API}/reports`);
       const completedReports = response.data.filter(report => 
         report.status === 'completed' && 
-        new Date(report.completion_date).getFullYear() === selectedYear
+        report.last_modified &&
+        new Date(report.last_modified).getFullYear() === selectedYear
       );
 
       const monthData = {};
@@ -1762,10 +1764,10 @@ const Calendar = () => {
         }
       }
 
-      // Calculate daily profits
+      // Calculate daily profits using last_modified date
       completedReports.forEach(report => {
-        if (report.completion_date && report.total_cost && report.parts_cost) {
-          const date = new Date(report.completion_date);
+        if (report.last_modified && report.total_cost && report.parts_cost) {
+          const date = moment.utc(report.last_modified).tz('America/Los_Angeles').toDate();
           const month = date.getMonth();
           const day = date.getDate();
           const profit = (report.total_cost || 0) - (report.parts_cost || 0);
