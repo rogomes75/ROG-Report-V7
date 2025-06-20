@@ -1058,7 +1058,7 @@ const ServiceReports = () => {
                 {/* Financial Fields */}
                 <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm font-medium text-blue-800 mb-3">Financial Information:</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-blue-700 mb-1">Estimate ($)</label>
                       <input
@@ -1067,10 +1067,10 @@ const ServiceReports = () => {
                         value={report.total_cost || ''}
                         onChange={(e) => {
                           const newValue = e.target.value;
-                          const updatedReports = reports.map(r => 
+                          const updatedReports = filteredReports.map(r => 
                             r.id === report.id ? { ...r, total_cost: parseFloat(newValue) || 0 } : r
                           );
-                          setReports(updatedReports);
+                          setFilteredReports(updatedReports);
                           
                           clearTimeout(window.financialTimeout);
                           window.financialTimeout = setTimeout(() => {
@@ -1083,17 +1083,17 @@ const ServiceReports = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-xs font-medium text-blue-700 mb-1">Cost of Services ($)</label>
+                      <label className="block text-xs font-medium text-blue-700 mb-1">Est. Cost ($)</label>
                       <input
                         type="number"
                         step="0.01"
                         value={report.parts_cost || ''}
                         onChange={(e) => {
                           const newValue = e.target.value;
-                          const updatedReports = reports.map(r => 
+                          const updatedReports = filteredReports.map(r => 
                             r.id === report.id ? { ...r, parts_cost: parseFloat(newValue) || 0 } : r
                           );
-                          setReports(updatedReports);
+                          setFilteredReports(updatedReports);
                           
                           clearTimeout(window.financialTimeout);
                           window.financialTimeout = setTimeout(() => {
@@ -1123,10 +1123,10 @@ const ServiceReports = () => {
                     value={report.admin_notes || ''}
                     onChange={(e) => {
                       // Update the local state immediately for better UX
-                      const updatedReports = reports.map(r => 
+                      const updatedReports = filteredReports.map(r => 
                         r.id === report.id ? { ...r, admin_notes: e.target.value } : r
                       );
-                      setReports(updatedReports);
+                      setFilteredReports(updatedReports);
                       
                       // Auto-save notes after user stops typing
                       clearTimeout(window.notesTimeout);
@@ -1139,6 +1139,20 @@ const ServiceReports = () => {
                     rows="2"
                   />
                 </div>
+
+                {/* Service History moved here */}
+                {report.modification_history && report.modification_history.length > 0 && (
+                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Service History:</p>
+                    <div className="space-y-1">
+                      {report.modification_history.map((mod, index) => (
+                        <p key={index} className="text-xs text-gray-600">
+                          {formatLADateTime(mod.modified_at)} - Modified by {mod.modified_by} ({mod.modified_by_role}): {mod.changes.join(', ')}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
