@@ -476,9 +476,12 @@ const ServiceReports = () => {
 
   const resetForm = () => {
     setSelectedClient('');
+    setManualClient({ name: '', address: '' });
+    setUseManualClient(false);
     setDescription('');
     setPriority('SAME WEEK');
     setPhotos([]);
+    setVideos([]);
     setEmployeeNotes('');
     setAdminNotes('');
     setTotalCost('');
