@@ -1179,13 +1179,42 @@ const ServiceReports = () => {
 const ServicesConcluded = () => {
   const { user } = useAuth();
   const [reports, setReports] = useState([]);
+  const [filteredReports, setFilteredReports] = useState([]);
   const [clients, setClients] = useState([]);
+  const [searchClient, setSearchClient] = useState('');
+  const [searchEmployee, setSearchEmployee] = useState('');
+  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchCompletedReports();
     fetchClients();
+    if (user?.role === 'admin') {
+      fetchUsers();
+    }
   }, []);
+
+  useEffect(() => {
+    filterReports();
+  }, [reports, searchClient, searchEmployee]);
+
+  const filterReports = () => {
+    let filtered = reports;
+    
+    if (searchClient) {
+      filtered = filtered.filter(report => 
+        report.client_name.toLowerCase().includes(searchClient.toLowerCase())
+      );
+    }
+    
+    if (searchEmployee) {
+      filtered = filtered.filter(report => 
+        report.employee_name.toLowerCase().includes(searchEmployee.toLowerCase())
+      );
+    }
+    
+    setFilteredReports(filtered);
+  };
 
   const fetchCompletedReports = async () => {
     try {
@@ -1195,6 +1224,28 @@ const ServicesConcluded = () => {
       setReports(completedReports);
     } catch (error) {
       console.error('Failed to fetch completed reports:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${API}/users`);
+      setUsers(response.data.filter(u => u.role === 'employee'));
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
+
+  const deleteReport = async (reportId) => {
+    if (window.confirm('Are you sure you want to delete this completed report? This action cannot be undone.')) {
+      try {
+        await axios.delete(`${API}/reports/${reportId}`);
+        fetchCompletedReports();
+        alert('Report deleted successfully');
+      } catch (error) {
+        console.error('Failed to delete report:', error);
+        alert('Failed to delete report');
+      }
     }
   };
 
