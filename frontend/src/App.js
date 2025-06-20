@@ -1270,7 +1270,7 @@ const ServicesConcluded = () => {
                   </p>
                 )}
               </div>
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <div className="flex flex-row items-center space-x-2 justify-end">
                 <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPriorityColor(report.priority)}`}>
                   {report.priority}
                 </span>
@@ -1280,9 +1280,12 @@ const ServicesConcluded = () => {
                 {user?.role === 'admin' && (
                   <button
                     onClick={() => deleteReport(report.id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-xs font-medium transition"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-xs font-medium transition flex items-center space-x-1"
                   >
-                    Delete
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span>Delete</span>
                   </button>
                 )}
               </div>
