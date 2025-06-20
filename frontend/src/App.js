@@ -450,8 +450,24 @@ const ServiceReports = () => {
     });
   };
 
-  const removePhoto = (index) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+  const handleVideoUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (videos.length + files.length > 2) {
+      alert('Maximum 2 videos allowed');
+      return;
+    }
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setVideos(prev => [...prev, event.target.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeVideo = (index) => {
+    setVideos(prev => prev.filter((_, i) => i !== index));
   };
 
   const resetForm = () => {
