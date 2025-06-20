@@ -354,6 +354,17 @@ async def update_service_report(report_id: str, update_data: ServiceReportUpdate
     updated_report = await db.service_reports.find_one({"id": report_id})
     return ServiceReport(**updated_report)
 
+@api_router.delete("/reports/{report_id}")
+async def delete_service_report(report_id: str, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admin can delete reports")
+    
+    result = await db.service_reports.delete_one({"id": report_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Report not found")
+    
+    return {"message": "Report deleted successfully"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
