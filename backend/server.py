@@ -283,6 +283,7 @@ async def create_client(client_data: dict, current_user: User = Depends(get_curr
         "id": str(uuid.uuid4()),
         "name": client_data["name"],
         "address": client_data["address"],
+        "employee_id": client_data.get("employee_id"),
         "created_at": get_la_time()
     }
     
