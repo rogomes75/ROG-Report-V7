@@ -613,7 +613,17 @@ const ServiceReports = () => {
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div className="flex-1">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Service Reports</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Service Reports</h2>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition"
+              >
+                + Report
+              </button>
+            )}
+          </div>
           <p className="text-sm text-gray-600 mt-1">Period: {getReportPeriod()}</p>
           <div className="mt-2 flex flex-wrap gap-4 text-sm">
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
@@ -650,15 +660,6 @@ const ServiceReports = () => {
           >
             <span>+</span>
             <span>New Report</span>
-          </button>
-        )}
-        {user?.role === 'admin' && (
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition flex items-center justify-center space-x-2"
-          >
-            <span>+</span>
-            <span>New Report (Admin)</span>
           </button>
         )}
       </div>
