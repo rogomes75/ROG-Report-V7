@@ -930,11 +930,19 @@ const ServiceReports = () => {
 
       {/* Reports List */}
       <div className="space-y-4 sm:space-y-6">
-        {reports.map(report => (
+        {filteredReports.map(report => (
           <div key={report.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
               <div className="flex-1">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                <div className="flex items-center gap-2">
+                  {isReportOverdue(report) && (
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  )}
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
+                </div>
+                {report.client_address && (
+                  <p className="text-xs sm:text-sm text-gray-500">{report.client_address}</p>
+                )}
                 <p className="text-gray-600 text-sm sm:text-base">By: {report.employee_name}</p>
                 <p className="text-xs sm:text-sm text-gray-500">
                   Created: {formatLATime(report.request_date)} at {report.created_time || formatLATimeOnly(report.request_date)}
@@ -955,7 +963,10 @@ const ServiceReports = () => {
               </div>
             </div>
 
-            <p className="text-gray-700 mb-4 text-sm sm:text-base">{report.description}</p>
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-1">Description:</p>
+              <p className="text-gray-700 text-sm sm:text-base">{report.description}</p>
+            </div>
 
             {report.employee_notes && (
               <div className="mb-4 p-3 bg-blue-50 rounded-lg">
