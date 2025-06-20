@@ -318,6 +318,8 @@ async def create_service_report(report_data: ServiceReportCreate, current_user: 
     report_dict["total_cost"] = 0.0
     report_dict["parts_cost"] = 0.0
     report_dict["gross_profit"] = 0.0
+    if "videos" not in report_dict:
+        report_dict["videos"] = []
     
     await db.service_reports.insert_one(report_dict)
     return ServiceReport(**report_dict)
