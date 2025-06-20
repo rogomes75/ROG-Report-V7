@@ -577,6 +577,15 @@ const ServiceReports = () => {
     return diffDays > 5 && report.status !== 'completed';
   };
 
+  const getPriorityColor = (priority) => {
+    const colors = {
+      'URGENT': 'bg-red-100 text-red-800',
+      'SAME WEEK': 'bg-orange-100 text-orange-800',
+      'NEXT WEEK': 'bg-blue-100 text-blue-800'
+    };
+    return colors[priority] || 'bg-gray-100 text-gray-800';
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
