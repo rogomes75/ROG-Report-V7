@@ -358,6 +358,8 @@ const ServiceReports = () => {
   const [editingReport, setEditingReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedUserFilter, setSelectedUserFilter] = useState('');
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [showMediaViewer, setShowMediaViewer] = useState(false);
 
   // Form states
   const [selectedClient, setSelectedClient] = useState('');
