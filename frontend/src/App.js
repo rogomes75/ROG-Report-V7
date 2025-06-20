@@ -1414,12 +1414,17 @@ const ServicesConcluded = () => {
         ))}
       </div>
 
-      {reports.length === 0 && (
+      {filteredReports.length === 0 && (
         <div className="text-center py-12">
           <div className="text-4xl sm:text-6xl mb-4">✅</div>
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No completed services yet</h3>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
+            {reports.length === 0 ? 'No completed services yet' : 'No services match your search'}
+          </h3>
           <p className="text-gray-600 text-sm sm:text-base px-4">
-            Completed service reports will appear here.
+            {reports.length === 0 
+              ? 'Completed service reports will appear here.'
+              : 'Try adjusting your search criteria.'
+            }
           </p>
         </div>
       )}
