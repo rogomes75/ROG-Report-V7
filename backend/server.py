@@ -98,6 +98,7 @@ class ServiceReportCreate(BaseModel):
     client_id: str
     description: str
     photos: List[str] = []
+    videos: List[str] = []
     priority: str
 
 class ServiceReportUpdate(BaseModel):
