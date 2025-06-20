@@ -2074,7 +2074,7 @@ const Calendar = () => {
         
         <div className="flex items-center gap-4">
           <div className="text-lg font-semibold text-green-600">
-            Year Total: ${calculateYearlyTotal().toFixed(2)}
+            Gross Profit: ${calculateYearlyTotal().toFixed(2)}
           </div>
           <select
             value={selectedMonth}
