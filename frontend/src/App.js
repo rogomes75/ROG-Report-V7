@@ -2488,99 +2488,32 @@ const ReportsDownload = () => {
 
   const generatePDF = async (reports, startDate, endDate) => {
     try {
+      console.log('Starting PDF generation...');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+      console.log('PDF instance created');
       
-      // Title
+      // Simple title
       pdf.setFontSize(20);
-      pdf.text('Service Reports - Completed', pageWidth / 2, 20, { align: 'center' });
+      pdf.text('Service Reports', 20, 20);
+      console.log('Title added');
       
-      // Date range
-      pdf.setFontSize(12);
-      pdf.text(`Period: ${startDate} to ${endDate}`, pageWidth / 2, 30, { align: 'center' });
-      
-      let yPosition = 50;
-      
-      for (let i = 0; i < reports.length; i++) {
+      // Add some simple text for each report
+      let yPos = 40;
+      for (let i = 0; i < Math.min(reports.length, 3); i++) { // Limit to 3 reports for testing
         const report = reports[i];
-        
-        // Check if we need a new page
-        if (yPosition > pageHeight - 80) {
-          pdf.addPage();
-          yPosition = 20;
-        }
-        
-        // Report header
-        pdf.setFontSize(14);
-        pdf.setFont(undefined, 'bold');
-        pdf.text(`Report ${i + 1}: ${report.client_name}`, 10, yPosition);
-        yPosition += 10;
-        
-        // Report details
-        pdf.setFontSize(10);
-        pdf.setFont(undefined, 'normal');
-        
-        const details = [
-          [`Date Completed:`, formatLATime(report.completion_date || report.request_date)],
-          [`Address:`, report.client_address || 'N/A'],
-          [`Employee:`, report.employee_name],
-          [`Priority:`, report.priority],
-          [`Description:`, report.description],
-          [`Total Cost:`, `$${formatCurrency(report.total_cost || 0)}`],
-          [`Parts Cost:`, `$${formatCurrency(report.parts_cost || 0)}`],
-          [`Gross Profit:`, `$${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`]
-        ];
-        
-        if (report.admin_notes) {
-          details.push([`Admin Notes:`, report.admin_notes]);
-        }
-        
-        if (report.employee_notes) {
-          details.push([`Employee Notes:`, report.employee_notes]);
-        }
-        
-        // Add details using autoTable
-        pdf.autoTable({
-          startY: yPosition,
-          head: [],
-          body: details,
-          theme: 'plain',
-          styles: { fontSize: 9, cellPadding: 2 },
-          columnStyles: {
-            0: { fontStyle: 'bold', cellWidth: 30 },
-            1: { cellWidth: 'auto' }
-          },
-          margin: { left: 10, right: 10 },
-          didDrawPage: function (data) {
-            yPosition = data.cursor.y;
-          }
-        });
-        
-        yPosition += 5;
-        
-        // Add photos if available
-        if (report.photos && report.photos.length > 0) {
-          pdf.setFontSize(10);
-          pdf.setFont(undefined, 'bold');
-          pdf.text(`Photos: ${report.photos.length} image(s)`, 10, yPosition);
-          yPosition += 10;
-          
-          // For now, just mention photos count instead of embedding them
-          // This avoids potential image format/corruption issues
-        }
-        
-        // Add separator line
-        pdf.setLineWidth(0.5);
-        pdf.line(10, yPosition, pageWidth - 10, yPosition);
-        yPosition += 10;
+        pdf.setFontSize(12);
+        pdf.text(`${i + 1}. ${report.client_name} - ${report.status}`, 20, yPos);
+        yPos += 10;
       }
       
+      console.log('Report data added');
+      
       // Save the PDF
-      pdf.save(`completed_reports_${startDate}_to_${endDate}.pdf`);
+      pdf.save(`test_report_${Date.now()}.pdf`);
+      console.log('PDF saved successfully');
       
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error('Error in generatePDF:', error);
       throw error;
     }
   };
