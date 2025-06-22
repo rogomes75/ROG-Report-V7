@@ -1073,8 +1073,8 @@ const ServiceReports = () => {
                     key={index}
                     src={photo}
                     alt={`Report photo ${index + 1}`}
-                    className="w-full h-20 sm:h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition"
-                    onClick={() => window.open(photo, '_blank')}
+                    className="w-full h-20 sm:h-24 object-cover rounded-lg cursor-pointer hover:opacity-80"
+                    onClick={() => openMediaViewer(photo, 'image')}
                   />
                 ))}
               </div>
