@@ -1130,7 +1130,11 @@ const ServiceReports = () => {
                   className="w-full px-3 py-2 border border-green-300 rounded-lg text-sm focus:ring-1 focus:ring-green-500 outline-none bg-white"
                   placeholder="Add admin notes..."
                   rows="3"
-            {/* Media Viewer Modal */}
+                />
+              </div>
+            )}
+
+            {report.photos && report.photos.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-4">
                 {report.photos.map((photo, index) => (
                   <img
