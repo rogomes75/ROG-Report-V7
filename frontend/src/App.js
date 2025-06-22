@@ -2516,19 +2516,8 @@ const ReportsDownload = () => {
         return;
       }
 
-      // Generate CSV content
-      const csvContent = generateCSV(reports);
-      
-      // Download CSV
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `completed_reports_${startDate}_to_${endDate}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Generate PDF with photos
+      await generatePDF(reports, startDate, endDate);
 
     } catch (error) {
       console.error('Failed to generate report:', error);
