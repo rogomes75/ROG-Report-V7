@@ -1640,7 +1640,8 @@ const ClientsManagement = () => {
 
       await axios.post(`${API}/clients`, {
         name: newClient.name.trim(),
-        address: newClient.address.trim()
+        address: newClient.address.trim(),
+        employee_id: newClient.employee_id || null
       });
       
       fetchClients();
