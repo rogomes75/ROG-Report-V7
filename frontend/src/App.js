@@ -352,6 +352,19 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                   >
                     Calendar
                   </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('reports-download');
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-4 py-2 rounded-lg font-medium transition text-left ${
+                      activeTab === 'reports-download'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-600 hover:text-blue-600'
+                    }`}
+                  >
+                    Reports
+                  </button>
                 </>
               )}
               
