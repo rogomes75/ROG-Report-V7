@@ -1764,7 +1764,7 @@ const ClientsManagement = () => {
                   type="button"
                   onClick={() => {
                     setShowAddClient(false);
-                    setNewClient({ name: '', address: '' });
+                    setNewClient({ name: '', address: '', employee_id: '' });
                   }}
                   disabled={isCreating}
                   className="w-full sm:flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition disabled:opacity-50"
