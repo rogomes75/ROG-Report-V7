@@ -2042,6 +2042,16 @@ const ClientsManagement = () => {
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 text-sm sm:text-base hidden sm:table-cell">{client.address}</td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 hidden sm:table-cell">
+                    <div>
+                      <div className="font-medium">{getEmployeeName(client.employee_id)}</div>
+                      {client.employee_id && (
+                        <div className="text-xs text-gray-400">
+                          Total: {getEmployeeClientCount(client.employee_id)} clients
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 hidden sm:table-cell">
                     {formatLATime(client.created_at)}
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
