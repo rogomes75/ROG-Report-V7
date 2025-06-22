@@ -632,12 +632,12 @@ const ServiceReports = () => {
     const diffTime = today - reportDate;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 1) {
-      return '🟢'; // Green flag for 1 day
-    } else if (diffDays >= 2) {
-      return '🔴'; // Red flag for 2+ days
+    if (diffDays <= 1) { // Today or 1 day before
+      return '🟢'; // Green flag 
+    } else if (diffDays >= 2) { // 2 or more days before
+      return '🔴'; // Red flag
     }
-    return null; // No flag for same day
+    return null;
   };
 
   const getPriorityColor = (priority) => {
