@@ -619,11 +619,25 @@ const ServiceReports = () => {
   };
 
   const isReportOverdue = (report) => {
+    const today = new Date();
     const reportDate = new Date(report.request_date);
-    const now = new Date();
-    const diffTime = Math.abs(now - reportDate);
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 5 && report.status !== 'completed';
+    const diffTime = today - reportDate;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 2;
+  };
+
+  const getReportFlag = (report) => {
+    const today = new Date();
+    const reportDate = new Date(report.request_date);
+    const diffTime = today - reportDate;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) {
+      return '🟢'; // Green flag for 1 day
+    } else if (diffDays >= 2) {
+      return '🔴'; // Red flag for 2+ days
+    }
+    return null; // No flag for same day
   };
 
   const getPriorityColor = (priority) => {
