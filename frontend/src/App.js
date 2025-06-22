@@ -1727,16 +1727,17 @@ const ClientsManagement = () => {
 
     setIsCreating(true);
     try {
-      // Check for duplicate
+      // Check for duplicate by name only
       const duplicate = clients.find(client => 
-        client.name.toLowerCase().trim() === newClient.name.toLowerCase().trim() &&
-        client.address.toLowerCase().trim() === newClient.address.toLowerCase().trim()
+        client.name.toLowerCase().trim() === newClient.name.toLowerCase().trim()
       );
       
       if (duplicate) {
-        alert('A client with this name and address already exists!');
-        setIsCreating(false);
-        return;
+        const proceed = window.confirm(`A client with the name "${newClient.name}" already exists.\n\nExisting client: ${duplicate.name} - ${duplicate.address}\nNew client: ${newClient.name} - ${newClient.address}\n\nDo you want to continue?`);
+        if (!proceed) {
+          setIsCreating(false);
+          return;
+        }
       }
 
       await axios.post(`${API}/clients`, {
