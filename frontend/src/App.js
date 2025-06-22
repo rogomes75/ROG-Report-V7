@@ -1735,6 +1735,16 @@ const ClientsManagement = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (employeeFilter === '') {
+      setFilteredClients(clients);
+    } else if (employeeFilter === 'unassigned') {
+      setFilteredClients(clients.filter(client => !client.employee_id));
+    } else {
+      setFilteredClients(clients.filter(client => client.employee_id === employeeFilter));
+    }
+  }, [clients, employeeFilter]);
+
   const fetchClients = async () => {
     try {
       const response = await axios.get(`${API}/clients`);
