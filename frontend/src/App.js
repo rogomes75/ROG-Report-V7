@@ -1621,8 +1621,9 @@ const ServicesConcluded = () => {
             {currentMedia.type === 'image' ? (
               <img
                 src={currentMedia.src}
-                alt="Full screen view"
-                className="max-w-full max-h-full object-contain"
+                alt="Full screen view - Click to close"
+                className="max-w-full max-h-full object-contain cursor-pointer"
+                onClick={closeMediaViewer}
               />
             ) : (
               <video
