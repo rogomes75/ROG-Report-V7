@@ -2020,7 +2020,7 @@ const ClientsManagement = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {clients.map(client => (
+              {filteredClients.map(client => (
                 <tr key={client.id} className="hover:bg-gray-50">
                   <td className="px-3 sm:px-6 py-3 sm:py-4">
                     <div>
