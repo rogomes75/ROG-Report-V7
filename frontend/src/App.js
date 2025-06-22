@@ -2356,7 +2356,7 @@ const Calendar = () => {
           </div>
           {profit > 0 && (
             <div className="text-xs text-green-600 font-medium">
-              ${profit.toFixed(0)}
+              ${formatCurrency(profit)}
             </div>
           )}
         </div>
