@@ -2488,150 +2488,208 @@ const ReportsDownload = () => {
 
   const generatePDF = async (reports, startDate, endDate) => {
     try {
-      console.log('Starting PDF generation...');
+      console.log('Starting enhanced PDF generation...');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       console.log('PDF instance created');
       
-      // Title and header
-      pdf.setFontSize(20);
-      pdf.setFont(undefined, 'bold');
-      pdf.text('Service Reports - Completed', pageWidth / 2, 20, { align: 'center' });
+      // Enhanced header with background
+      pdf.setFillColor(41, 128, 185); // Professional blue
+      pdf.rect(0, 0, pageWidth, 35, 'F');
       
+      // Title
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('SERVICE REPORTS - COMPLETED', pageWidth / 2, 15, { align: 'center' });
+      
+      // Subtitle
       pdf.setFontSize(12);
       pdf.setFont(undefined, 'normal');
-      pdf.text(`Period: ${startDate} to ${endDate}`, pageWidth / 2, 30, { align: 'center' });
-      pdf.text(`Total Reports: ${reports.length}`, pageWidth / 2, 40, { align: 'center' });
+      pdf.text(`Period: ${startDate} to ${endDate} | Total: ${reports.length} reports`, pageWidth / 2, 25, { align: 'center' });
       
-      let yPosition = 55;
+      let yPosition = 45;
+      let reportsPerPage = 0;
+      const maxReportsPerPage = 3; // Fit 3 reports per page
       
       for (let i = 0; i < reports.length; i++) {
         const report = reports[i];
         console.log(`Processing report ${i + 1}:`, report.client_name);
         
         // Check if we need a new page
-        if (yPosition > pageHeight - 100) {
+        if (reportsPerPage >= maxReportsPerPage || yPosition > pageHeight - 100) {
           pdf.addPage();
           yPosition = 20;
+          reportsPerPage = 0;
         }
         
-        // Report header
-        pdf.setFontSize(14);
+        // Report container with border
+        const containerHeight = 85;
+        pdf.setFillColor(248, 249, 250);
+        pdf.setDrawColor(200, 200, 200);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(10, yPosition - 5, pageWidth - 20, containerHeight, 3, 3, 'FD');
+        
+        // Report header with colored background
+        pdf.setFillColor(52, 152, 219);
+        pdf.roundedRect(12, yPosition - 3, pageWidth - 24, 12, 2, 2, 'F');
+        
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(12);
         pdf.setFont(undefined, 'bold');
-        pdf.text(`Report ${i + 1}: ${report.client_name}`, 15, yPosition);
+        pdf.text(`#${i + 1} ${report.client_name}`, 15, yPosition + 5);
+        
+        // Priority badge
+        const priorityColors = {
+          'URGENT': [231, 76, 60],
+          'SAME WEEK': [243, 156, 18],
+          'NEXT WEEK': [46, 204, 113]
+        };
+        const priorityColor = priorityColors[report.priority] || [149, 165, 166];
+        pdf.setFillColor(...priorityColor);
+        pdf.roundedRect(pageWidth - 45, yPosition - 2, 32, 8, 2, 2, 'F');
+        pdf.setFontSize(8);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(report.priority, pageWidth - 29, yPosition + 3, { align: 'center' });
+        
         yPosition += 15;
         
-        // Report details with enhanced formatting
-        pdf.setFontSize(10);
+        // Two-column layout for report details
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(9);
         pdf.setFont(undefined, 'normal');
         
-        const details = [
-          `Date Completed: ${formatLATime(report.completion_date || report.request_date)}`,
-          `Client: ${report.client_name}`,
-          `Address: ${report.client_address || 'N/A'}`,
-          `Employee: ${report.employee_name || 'N/A'}`,
-          `Priority: ${report.priority}`,
-          `Description: ${report.description || 'N/A'}`
+        // Left column
+        const leftColX = 15;
+        const rightColX = pageWidth / 2 + 5;
+        let leftY = yPosition;
+        let rightY = yPosition;
+        
+        // Left column data
+        const leftData = [
+          { label: 'Date:', value: formatLATime(report.completion_date || report.request_date) },
+          { label: 'Address:', value: report.client_address || 'N/A' },
+          { label: 'Employee:', value: report.employee_name || 'N/A' }
         ];
         
-        // Add financial info if available
-        if (report.total_cost || report.parts_cost) {
-          details.push(`Total Cost: $${formatCurrency(report.total_cost || 0)}`);
-          details.push(`Parts Cost: $${formatCurrency(report.parts_cost || 0)}`);
-          details.push(`Gross Profit: $${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`);
-        }
-        
-        // Add notes if available
-        if (report.employee_notes) {
-          details.push(`Employee Notes: ${report.employee_notes}`);
-        }
-        
-        if (report.admin_notes) {
-          details.push(`Admin Notes: ${report.admin_notes}`);
-        }
-        
-        // Draw each detail line
-        details.forEach(detail => {
-          if (yPosition > pageHeight - 20) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-          pdf.text(detail, 15, yPosition);
-          yPosition += 8;
+        leftData.forEach(item => {
+          pdf.setFont(undefined, 'bold');
+          pdf.text(item.label, leftColX, leftY);
+          pdf.setFont(undefined, 'normal');
+          pdf.text(item.value, leftColX + 25, leftY);
+          leftY += 7;
         });
         
-        // Add photos if available
+        // Right column - Financial data
+        if (report.total_cost || report.parts_cost) {
+          const financialData = [
+            { label: 'Total:', value: `$${formatCurrency(report.total_cost || 0)}` },
+            { label: 'Parts:', value: `$${formatCurrency(report.parts_cost || 0)}` },
+            { label: 'Profit:', value: `$${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}` }
+          ];
+          
+          financialData.forEach(item => {
+            pdf.setFont(undefined, 'bold');
+            pdf.text(item.label, rightColX, rightY);
+            pdf.setFont(undefined, 'normal');
+            pdf.text(item.value, rightColX + 25, rightY);
+            rightY += 7;
+          });
+        }
+        
+        // Description section
+        yPosition = Math.max(leftY, rightY) + 3;
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Description:', leftColX, yPosition);
+        pdf.setFont(undefined, 'normal');
+        
+        // Wrap description text
+        const descText = report.description || 'N/A';
+        const wrappedDesc = pdf.splitTextToSize(descText, pageWidth - 40);
+        pdf.text(wrappedDesc.slice(0, 2), leftColX, yPosition + 6); // Limit to 2 lines
+        
+        yPosition += (wrappedDesc.length > 2 ? 18 : 12);
+        
+        // Notes section (compact)
+        if (report.admin_notes || report.employee_notes) {
+          pdf.setFontSize(8);
+          if (report.admin_notes) {
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Admin:', leftColX, yPosition);
+            pdf.setFont(undefined, 'normal');
+            const adminText = pdf.splitTextToSize(report.admin_notes, 80);
+            pdf.text(adminText.slice(0, 1), leftColX + 20, yPosition);
+            yPosition += 6;
+          }
+          if (report.employee_notes) {
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Employee:', leftColX, yPosition);
+            pdf.setFont(undefined, 'normal');
+            const empText = pdf.splitTextToSize(report.employee_notes, 80);
+            pdf.text(empText.slice(0, 1), leftColX + 25, yPosition);
+            yPosition += 6;
+          }
+        }
+        
+        // Compact photos section
         if (report.photos && report.photos.length > 0) {
-          yPosition += 5;
+          const photoStartX = rightColX;
+          const photoY = yPosition - 35;
+          const photoSize = 20; // Smaller photos
+          const maxPhotos = 4; // Max 4 photos to save space
           
-          // Photos header
-          pdf.setFontSize(11);
+          pdf.setFontSize(8);
           pdf.setFont(undefined, 'bold');
-          pdf.text(`Photos (${report.photos.length}):`, 15, yPosition);
-          yPosition += 10;
+          pdf.text(`Photos (${Math.min(report.photos.length, maxPhotos)}):`, photoStartX, photoY - 5);
           
-          const photosPerRow = 2;
-          const photoWidth = 50;
-          const photoHeight = 40;
-          const startX = 15;
-          
-          for (let j = 0; j < report.photos.length; j++) {
+          for (let j = 0; j < Math.min(report.photos.length, maxPhotos); j++) {
             try {
               const photoData = report.photos[j];
-              const row = Math.floor(j / photosPerRow);
-              const col = j % photosPerRow;
-              const x = startX + col * (photoWidth + 15);
-              const y = yPosition + row * (photoHeight + 15);
+              const col = j % 2;
+              const row = Math.floor(j / 2);
+              const x = photoStartX + col * (photoSize + 3);
+              const y = photoY + row * (photoSize + 3);
               
-              // Check if we need a new page for this photo
-              if (y + photoHeight > pageHeight - 20) {
-                pdf.addPage();
-                yPosition = 20;
-                const newRow = Math.floor(j / photosPerRow);
-                const newY = yPosition + (newRow * (photoHeight + 15));
-                pdf.addImage(photoData, 'JPEG', x, newY, photoWidth, photoHeight);
-                
-                // Add photo caption
-                pdf.setFontSize(8);
-                pdf.text(`Photo ${j + 1}`, x, newY + photoHeight + 8);
-              } else {
-                pdf.addImage(photoData, 'JPEG', x, y, photoWidth, photoHeight);
-                
-                // Add photo caption
-                pdf.setFontSize(8);
-                pdf.text(`Photo ${j + 1}`, x, y + photoHeight + 8);
-              }
+              pdf.addImage(photoData, 'JPEG', x, y, photoSize, photoSize);
+              
+              // Photo number
+              pdf.setFontSize(6);
+              pdf.setTextColor(255, 255, 255);
+              pdf.setFillColor(0, 0, 0, 0.7);
+              pdf.circle(x + 2, y + 2, 1.5, 'F');
+              pdf.text(`${j + 1}`, x + 2, y + 3, { align: 'center' });
+              pdf.setTextColor(0, 0, 0);
               
             } catch (error) {
               console.warn(`Failed to add photo ${j + 1}:`, error);
-              // Add placeholder text
-              const row = Math.floor(j / photosPerRow);
-              const col = j % photosPerRow;
-              const x = startX + col * (photoWidth + 15);
-              const y = yPosition + row * 15;
-              
-              pdf.setFontSize(9);
-              pdf.text(`[Photo ${j + 1} - Could not load]`, x, y);
             }
           }
           
-          yPosition += Math.ceil(report.photos.length / photosPerRow) * (photoHeight + 15) + 10;
+          if (report.photos.length > maxPhotos) {
+            pdf.setFontSize(7);
+            pdf.text(`+${report.photos.length - maxPhotos} more`, photoStartX, photoY + 45);
+          }
         }
         
-        // Add separator
-        yPosition += 10;
-        if (i < reports.length - 1) {
-          pdf.setLineWidth(0.3);
-          pdf.line(15, yPosition, pageWidth - 15, yPosition);
-          yPosition += 10;
-        }
+        yPosition += containerHeight + 10;
+        reportsPerPage++;
+      }
+      
+      // Footer
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        pdf.setPage(p);
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(`Page ${p} of ${totalPages}`, pageWidth - 20, pageHeight - 5, { align: 'right' });
+        pdf.text('Generated by Pool Maintenance System', 10, pageHeight - 5);
       }
       
       // Save the PDF
       const fileName = `service_reports_${startDate}_to_${endDate}.pdf`;
       pdf.save(fileName);
-      console.log('PDF saved successfully:', fileName);
+      console.log('Enhanced PDF saved successfully:', fileName);
       
     } catch (error) {
       console.error('Error in generatePDF:', error);
