@@ -2438,16 +2438,10 @@ const ReportsDownload = () => {
 
     setIsGenerating(true);
     try {
-      let query = `?start_date=${startDate}&end_date=${endDate}`;
-      if (selectedClient && selectedClient !== 'all') {
-        query += `&client_name=${encodeURIComponent(selectedClient)}`;
-      }
-      if (selectedEmployee && selectedEmployee !== 'all') {
-        query += `&employee_id=${selectedEmployee}`;
-      }
-
+      console.log('Fetching reports...');
       const response = await axios.get(`${API}/reports`);
       const allReports = response.data;
+      console.log('All reports:', allReports.length);
       
       // Filter completed reports by date and other criteria
       let reports = allReports.filter(report => {
@@ -2460,14 +2454,18 @@ const ReportsDownload = () => {
         return reportDate >= start && reportDate <= end;
       });
       
+      console.log('Completed reports in date range:', reports.length);
+      
       // Apply client filter
       if (selectedClient && selectedClient !== 'all' && selectedClient !== '') {
         reports = reports.filter(report => report.client_name === selectedClient);
+        console.log('After client filter:', reports.length);
       }
       
       // Apply employee filter  
       if (selectedEmployee && selectedEmployee !== 'all' && selectedEmployee !== '') {
         reports = reports.filter(report => report.employee_id === selectedEmployee);
+        console.log('After employee filter:', reports.length);
       }
 
       if (reports.length === 0) {
@@ -2476,8 +2474,10 @@ const ReportsDownload = () => {
         return;
       }
 
+      console.log('Generating PDF with', reports.length, 'reports');
       // Generate PDF with photos
       await generatePDF(reports, startDate, endDate);
+      console.log('PDF generated successfully');
 
     } catch (error) {
       console.error('Failed to generate report:', error);
