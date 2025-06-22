@@ -24,6 +24,14 @@ const formatLATimeOnly = (date) => {
   return moment.utc(date).tz('America/Los_Angeles').format('hh:mm A');
 };
 
+// Format number with commas
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(amount || 0);
+};
+
 // Auth Context
 const AuthContext = createContext();
 
