@@ -1264,11 +1264,37 @@ const ServiceReports = () => {
           </p>
         </div>
       )}
+      
+      {/* Media Viewer Modal */}
+      {showMediaViewer && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50" onClick={closeMediaViewer}>
+          <div className="relative max-w-4xl max-h-full" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={closeMediaViewer}
+              className="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 z-10"
+            >
+              ✕
+            </button>
+            {currentMedia.type === 'image' ? (
+              <img
+                src={currentMedia.src}
+                alt="Full screen view"
+                className="max-w-full max-h-full object-contain"
+              />
+            ) : (
+              <video
+                src={currentMedia.src}
+                controls
+                autoPlay
+                className="max-w-full max-h-full object-contain"
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-// Services Completed Component
 const ServicesConcluded = () => {
   const { user } = useAuth();
   const [reports, setReports] = useState([]);
