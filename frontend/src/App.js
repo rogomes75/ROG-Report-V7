@@ -2473,8 +2473,19 @@ const ReportsDownload = () => {
         query += `&employee_id=${selectedEmployee}`;
       }
 
-      const response = await axios.get(`${API}/reports/completed${query}`);
-      const reports = response.data;
+      const response = await axios.get(`${API}/reports`);
+      const allReports = response.data;
+      
+      // Filter completed reports by date and other criteria
+      let reports = allReports.filter(report => {
+        if (report.status !== 'completed') return false;
+        
+        const reportDate = new Date(report.completion_date || report.request_date);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        return reportDate >= start && reportDate <= end;
+      });
 
       if (reports.length === 0) {
         alert('No completed reports found for the selected criteria');
