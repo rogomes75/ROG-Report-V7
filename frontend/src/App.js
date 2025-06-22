@@ -1515,13 +1515,13 @@ const ServicesConcluded = () => {
                     <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPriorityColor(report.priority)}`}>
                       {report.priority}
                     </span>
-                    <div className="flex items-center space-x-1">
+                    <div className="flex flex-col items-center space-y-1">
                       <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
                         COMPLETED
                       </span>
                       {report.completion_date && (
                         <span className="text-xs text-green-600 font-medium">
-                          {formatLADateTime(report.completion_date)}
+                          {formatLATime(report.completion_date)}
                         </span>
                       )}
                     </div>
