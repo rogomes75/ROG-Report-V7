@@ -690,17 +690,17 @@ const ServiceReports = () => {
               {user?.role === 'employee' && (
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded-full text-xs font-medium transition"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
                 >
-                  + Report
+                  Add Report
                 </button>
               )}
               {user?.role === 'admin' && (
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded-full text-xs font-medium transition"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
                 >
-                  + Report
+                  Add Report
                 </button>
               )}
             </div>
