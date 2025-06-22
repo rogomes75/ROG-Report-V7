@@ -1759,6 +1759,21 @@ const ClientsManagement = () => {
                 />
               </div>
               
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Assign to Employee (Optional)</label>
+                <select
+                  value={newClient.employee_id}
+                  onChange={(e) => setNewClient({...newClient, employee_id: e.target.value})}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                  disabled={isCreating}
+                >
+                  <option value="">No specific employee</option>
+                  {users.filter(u => u.role === 'employee').map(employee => (
+                    <option key={employee.id} value={employee.id}>{employee.username}</option>
+                  ))}
+                </select>
+              </div>
+              
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                 <button
                   type="button"
