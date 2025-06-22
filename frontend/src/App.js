@@ -1033,6 +1033,11 @@ const ServiceReports = () => {
                 </span>
                 <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(report.status)}`}>
                   {report.status.replace('_', ' ').toUpperCase()}
+                  {report.status === 'reported' && (
+                    <span className="ml-2 text-xs">
+                      {formatLADateTime(report.request_date)}
+                    </span>
+                  )}
                 </span>
               </div>
             </div>
