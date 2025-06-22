@@ -487,7 +487,8 @@ const ServiceReports = () => {
         client_id: selectedClient,
         description,
         priority,
-        photos
+        photos,
+        videos
       });
 
       setShowCreateForm(false);
