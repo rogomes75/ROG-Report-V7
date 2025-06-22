@@ -1840,13 +1840,13 @@ const ClientsManagement = () => {
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <button
             onClick={() => setShowUpload(true)}
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
+            className="flex-1 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-full text-xs font-medium transition"
           >
             📊 Import Excel
           </button>
           <button
             onClick={() => setShowAddClient(true)}
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition"
+            className="flex-1 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-xs font-medium transition"
           >
             ➕ Add Customer
           </button>
