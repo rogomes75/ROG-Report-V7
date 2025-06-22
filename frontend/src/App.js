@@ -1432,13 +1432,18 @@ const ServicesConcluded = () => {
         
         {/* Search Filters - Change employee search to dropdown for admin */}
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search by client name..."
+          <select
             value={searchClient}
             onChange={(e) => setSearchClient(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-          />
+          >
+            <option value="">All Clients</option>
+            {clients.map(client => (
+              <option key={client.id} value={client.name}>
+                {client.name}
+              </option>
+            ))}
+          </select>
           {user?.role === 'admin' && (
             <select
               value={searchEmployee}
