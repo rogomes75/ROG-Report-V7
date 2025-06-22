@@ -2732,7 +2732,7 @@ const ReportsDownload = () => {
       </div>
 
       <div className="bg-blue-50 rounded-lg p-4">
-        <h4 className="font-semibold text-blue-800 mb-2">Report Contents:</h4>
+        <h4 className="font-semibold text-blue-800 mb-2">PDF Report Contents:</h4>
         <ul className="text-blue-700 text-sm space-y-1">
           <li>• Date Completed</li>
           <li>• Client Information (Name, Address)</li>
@@ -2741,7 +2741,8 @@ const ReportsDownload = () => {
           <li>• Service Description</li>
           <li>• Financial Details (Total Cost, Parts Cost, Gross Profit)</li>
           <li>• Admin and Employee Notes</li>
-          <li>• Photos and videos are not included in CSV export</li>
+          <li>• Photos included in high quality</li>
+          <li>• Professional PDF formatting with each report on separate sections</li>
         </ul>
       </div>
     </div>
