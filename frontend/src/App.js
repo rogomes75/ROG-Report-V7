@@ -2506,6 +2506,16 @@ const ReportsDownload = () => {
       if (selectedEmployee && selectedEmployee !== 'all' && selectedEmployee !== '') {
         reports = reports.filter(report => report.employee_id === selectedEmployee);
       }
+      
+      // Apply client filter
+      if (selectedClient && selectedClient !== 'all' && selectedClient !== '') {
+        reports = reports.filter(report => report.client_name === selectedClient);
+      }
+      
+      // Apply employee filter  
+      if (selectedEmployee && selectedEmployee !== 'all' && selectedEmployee !== '') {
+        reports = reports.filter(report => report.employee_id === selectedEmployee);
+      }
 
       if (reports.length === 0) {
         alert('No completed reports found for the selected criteria');
