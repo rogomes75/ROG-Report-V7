@@ -1544,7 +1544,7 @@ const ClientsManagement = () => {
   const [selectedUser, setSelectedUser] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
-  const [newClient, setNewClient] = useState({ name: '', address: '' });
+  const [newClient, setNewClient] = useState({ name: '', address: '', employee_id: '' });
   const [isCreating, setIsCreating] = useState(false);
   const { user } = useAuth();
 
