@@ -1069,9 +1069,6 @@ const ServiceReports = () => {
                   {getReportFlag(report) && (
                     <span className="text-lg">{getReportFlag(report)}</span>
                   )}
-                  {isReportOverdue(report) && (
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  )}
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{report.client_name}</h3>
                 </div>
                 {report.client_address && (
