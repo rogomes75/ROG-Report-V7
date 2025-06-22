@@ -2511,7 +2511,7 @@ const ReportsDownload = () => {
         console.log(`Processing report ${i + 1}:`, report.client_name);
         
         // Check if we need a new page
-        if (yPosition > pageHeight - 100) {
+        if (yPosition > pageHeight - 120) {
           pdf.addPage();
           yPosition = 20;
         }
@@ -2520,58 +2520,66 @@ const ReportsDownload = () => {
         pdf.setFontSize(14);
         pdf.setFont(undefined, 'bold');
         pdf.text(`Report ${i + 1}: ${report.client_name}`, 15, yPosition);
-        yPosition += 15;
+        yPosition += 10;
         
-        // Report details with simple text (no autoTable for now)
-        pdf.setFontSize(10);
-        pdf.setFont(undefined, 'normal');
-        
-        const details = [
-          `Date Completed: ${formatLATime(report.completion_date || report.request_date)}`,
-          `Client: ${report.client_name}`,
-          `Address: ${report.client_address || 'N/A'}`,
-          `Employee: ${report.employee_name || 'N/A'}`,
-          `Priority: ${report.priority}`,
-          `Description: ${report.description || 'N/A'}`
+        // Create data for autoTable
+        const reportData = [
+          ['Date Completed', formatLATime(report.completion_date || report.request_date)],
+          ['Client Name', report.client_name],
+          ['Client Address', report.client_address || 'N/A'],
+          ['Employee', report.employee_name || 'N/A'],
+          ['Priority', report.priority],
+          ['Description', report.description || 'N/A']
         ];
         
-        // Add financial info if available
+        // Add financial information if available
         if (report.total_cost || report.parts_cost) {
-          details.push(`Total Cost: $${formatCurrency(report.total_cost || 0)}`);
-          details.push(`Parts Cost: $${formatCurrency(report.parts_cost || 0)}`);
-          details.push(`Gross Profit: $${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`);
+          reportData.push(['Total Cost', `$${formatCurrency(report.total_cost || 0)}`]);
+          reportData.push(['Parts Cost', `$${formatCurrency(report.parts_cost || 0)}`]);
+          reportData.push(['Gross Profit', `$${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`]);
         }
         
         // Add notes if available
         if (report.employee_notes) {
-          details.push(`Employee Notes: ${report.employee_notes}`);
+          reportData.push(['Employee Notes', report.employee_notes]);
         }
         
         if (report.admin_notes) {
-          details.push(`Admin Notes: ${report.admin_notes}`);
+          reportData.push(['Admin Notes', report.admin_notes]);
         }
         
-        // Add photos count if available
+        // Add photos info if available
         if (report.photos && report.photos.length > 0) {
-          details.push(`Photos: ${report.photos.length} image(s) included`);
+          reportData.push(['Photos', `${report.photos.length} image(s) included`]);
         }
         
-        // Draw each detail line
-        details.forEach(detail => {
-          if (yPosition > pageHeight - 20) {
-            pdf.addPage();
-            yPosition = 20;
+        // Use autoTable for clean formatting
+        pdf.autoTable({
+          startY: yPosition,
+          head: [],
+          body: reportData,
+          theme: 'striped',
+          styles: { 
+            fontSize: 9, 
+            cellPadding: 3,
+            overflow: 'linebreak'
+          },
+          columnStyles: {
+            0: { fontStyle: 'bold', cellWidth: 35, fillColor: [245, 245, 245] },
+            1: { cellWidth: 'auto' }
+          },
+          margin: { left: 15, right: 15 },
+          didDrawPage: function (data) {
+            yPosition = data.cursor.y + 10;
           }
-          pdf.text(detail, 15, yPosition);
-          yPosition += 8;
         });
         
-        // Add separator
-        yPosition += 10;
+        // Add separator between reports
         if (i < reports.length - 1) {
           pdf.setLineWidth(0.3);
+          pdf.setDrawColor(150, 150, 150);
           pdf.line(15, yPosition, pageWidth - 15, yPosition);
-          yPosition += 10;
+          yPosition += 15;
         }
       }
       
