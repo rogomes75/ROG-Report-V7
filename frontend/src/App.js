@@ -1169,35 +1169,7 @@ const ServiceReports = () => {
               </div>
             )}
 
-            {/* Admin Notes for Users (Read-only) */}
-            {report.admin_notes && user?.role !== 'admin' && (
-              <div className="mb-4 p-3 bg-green-50 rounded-lg">
-                <p className="text-sm font-medium text-green-800 mb-1">Admin Notes:</p>
-                <p className="text-green-700 text-sm">{report.admin_notes}</p>
-              </div>
-            )}
-
-            {/* Admin Notes Field (Admin Only - Always Visible) */}
-            {user?.role === 'admin' && (
-              <div className="mb-4 p-3 bg-green-50 rounded-lg">
-                <p className="text-sm font-medium text-green-800 mb-2">Admin Notes:</p>
-                <textarea
-                  value={report.admin_notes || ''}
-                  onChange={(e) => {
-                    // Update admin notes with debounce
-                    clearTimeout(window.adminNotesTimeout);
-                    window.adminNotesTimeout = setTimeout(() => {
-                      updateAdminNotes(report.id, e.target.value);
-                    }, 1000);
-                  }}
-                  className="w-full px-3 py-2 border border-green-300 rounded-lg text-sm focus:ring-1 focus:ring-green-500 outline-none bg-white"
-                  placeholder="Add admin notes..."
-                  rows="3"
-                />
-              </div>
-            )}
-
-            {/* Financial Information (Admin Only) - REMOVED FROM SERVICE REPORTS */}
+            {/* Media Viewer Modal */}
 
             {/* Modification History (for all users) */}
             {(user?.role !== 'admin') && report.modification_history && report.modification_history.length > 0 && (
