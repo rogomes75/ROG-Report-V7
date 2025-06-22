@@ -1247,7 +1247,7 @@ const ServiceReports = () => {
                       <label className="block text-xs font-medium text-blue-700 mb-1">Gross Profit ($)</label>
                       <input
                         type="text"
-                        value={`${((report.total_cost || 0) - (report.parts_cost || 0)).toFixed(2)}`}
+                        value={`${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`}
                         readOnly
                         className="w-full px-2 py-1 border border-blue-300 rounded bg-blue-100 text-sm"
                       />
