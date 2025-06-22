@@ -2487,119 +2487,102 @@ const ReportsDownload = () => {
   };
 
   const generatePDF = async (reports, startDate, endDate) => {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    
-    // Title
-    pdf.setFontSize(20);
-    pdf.text('Service Reports - Completed', pageWidth / 2, 20, { align: 'center' });
-    
-    // Date range
-    pdf.setFontSize(12);
-    pdf.text(`Period: ${startDate} to ${endDate}`, pageWidth / 2, 30, { align: 'center' });
-    
-    let yPosition = 50;
-    
-    for (let i = 0; i < reports.length; i++) {
-      const report = reports[i];
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
       
-      // Check if we need a new page
-      if (yPosition > pageHeight - 80) {
-        pdf.addPage();
-        yPosition = 20;
-      }
+      // Title
+      pdf.setFontSize(20);
+      pdf.text('Service Reports - Completed', pageWidth / 2, 20, { align: 'center' });
       
-      // Report header
-      pdf.setFontSize(14);
-      pdf.setFont(undefined, 'bold');
-      pdf.text(`Report ${i + 1}: ${report.client_name}`, 10, yPosition);
-      yPosition += 10;
+      // Date range
+      pdf.setFontSize(12);
+      pdf.text(`Period: ${startDate} to ${endDate}`, pageWidth / 2, 30, { align: 'center' });
       
-      // Report details
-      pdf.setFontSize(10);
-      pdf.setFont(undefined, 'normal');
+      let yPosition = 50;
       
-      const details = [
-        [`Date Completed:`, formatLATime(report.completion_date || report.request_date)],
-        [`Address:`, report.client_address || 'N/A'],
-        [`Employee:`, report.employee_name],
-        [`Priority:`, report.priority],
-        [`Description:`, report.description],
-        [`Total Cost:`, `$${formatCurrency(report.total_cost || 0)}`],
-        [`Parts Cost:`, `$${formatCurrency(report.parts_cost || 0)}`],
-        [`Gross Profit:`, `$${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`]
-      ];
-      
-      if (report.admin_notes) {
-        details.push([`Admin Notes:`, report.admin_notes]);
-      }
-      
-      if (report.employee_notes) {
-        details.push([`Employee Notes:`, report.employee_notes]);
-      }
-      
-      // Add details using autoTable
-      pdf.autoTable({
-        startY: yPosition,
-        head: [],
-        body: details,
-        theme: 'plain',
-        styles: { fontSize: 9, cellPadding: 2 },
-        columnStyles: {
-          0: { fontStyle: 'bold', cellWidth: 30 },
-          1: { cellWidth: 'auto' }
-        },
-        margin: { left: 10, right: 10 },
-        didDrawPage: function (data) {
-          yPosition = data.cursor.y;
+      for (let i = 0; i < reports.length; i++) {
+        const report = reports[i];
+        
+        // Check if we need a new page
+        if (yPosition > pageHeight - 80) {
+          pdf.addPage();
+          yPosition = 20;
         }
-      });
-      
-      yPosition += 5;
-      
-      // Add photos if available
-      if (report.photos && report.photos.length > 0) {
-        pdf.setFontSize(10);
+        
+        // Report header
+        pdf.setFontSize(14);
         pdf.setFont(undefined, 'bold');
-        pdf.text('Photos:', 10, yPosition);
+        pdf.text(`Report ${i + 1}: ${report.client_name}`, 10, yPosition);
+        yPosition += 10;
+        
+        // Report details
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'normal');
+        
+        const details = [
+          [`Date Completed:`, formatLATime(report.completion_date || report.request_date)],
+          [`Address:`, report.client_address || 'N/A'],
+          [`Employee:`, report.employee_name],
+          [`Priority:`, report.priority],
+          [`Description:`, report.description],
+          [`Total Cost:`, `$${formatCurrency(report.total_cost || 0)}`],
+          [`Parts Cost:`, `$${formatCurrency(report.parts_cost || 0)}`],
+          [`Gross Profit:`, `$${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`]
+        ];
+        
+        if (report.admin_notes) {
+          details.push([`Admin Notes:`, report.admin_notes]);
+        }
+        
+        if (report.employee_notes) {
+          details.push([`Employee Notes:`, report.employee_notes]);
+        }
+        
+        // Add details using autoTable
+        pdf.autoTable({
+          startY: yPosition,
+          head: [],
+          body: details,
+          theme: 'plain',
+          styles: { fontSize: 9, cellPadding: 2 },
+          columnStyles: {
+            0: { fontStyle: 'bold', cellWidth: 30 },
+            1: { cellWidth: 'auto' }
+          },
+          margin: { left: 10, right: 10 },
+          didDrawPage: function (data) {
+            yPosition = data.cursor.y;
+          }
+        });
+        
         yPosition += 5;
         
-        const photosPerRow = 2;
-        const photoWidth = 40;
-        const photoHeight = 30;
-        
-        for (let j = 0; j < report.photos.length; j++) {
-          try {
-            const photoData = report.photos[j];
-            const x = 10 + (j % photosPerRow) * (photoWidth + 10);
-            const y = yPosition + Math.floor(j / photosPerRow) * (photoHeight + 5);
-            
-            // Check if we need a new page for photos
-            if (y + photoHeight > pageHeight - 20) {
-              pdf.addPage();
-              yPosition = 20;
-              const newY = yPosition + Math.floor(j / photosPerRow) * (photoHeight + 5);
-              pdf.addImage(photoData, 'JPEG', x, newY, photoWidth, photoHeight);
-            } else {
-              pdf.addImage(photoData, 'JPEG', x, y, photoWidth, photoHeight);
-            }
-          } catch (error) {
-            console.warn('Failed to add photo to PDF:', error);
-          }
+        // Add photos if available
+        if (report.photos && report.photos.length > 0) {
+          pdf.setFontSize(10);
+          pdf.setFont(undefined, 'bold');
+          pdf.text(`Photos: ${report.photos.length} image(s)`, 10, yPosition);
+          yPosition += 10;
+          
+          // For now, just mention photos count instead of embedding them
+          // This avoids potential image format/corruption issues
         }
         
-        yPosition += Math.ceil(report.photos.length / photosPerRow) * (photoHeight + 5) + 10;
+        // Add separator line
+        pdf.setLineWidth(0.5);
+        pdf.line(10, yPosition, pageWidth - 10, yPosition);
+        yPosition += 10;
       }
       
-      // Add separator line
-      pdf.setLineWidth(0.5);
-      pdf.line(10, yPosition, pageWidth - 10, yPosition);
-      yPosition += 10;
+      // Save the PDF
+      pdf.save(`completed_reports_${startDate}_to_${endDate}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw error;
     }
-    
-    // Save the PDF
-    pdf.save(`completed_reports_${startDate}_to_${endDate}.pdf`);
   };
 
   return (
