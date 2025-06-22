@@ -2490,27 +2490,150 @@ const ReportsDownload = () => {
     try {
       console.log('Starting PDF generation...');
       const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
       console.log('PDF instance created');
       
-      // Simple title
+      // Title and header
       pdf.setFontSize(20);
-      pdf.text('Service Reports', 20, 20);
-      console.log('Title added');
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Service Reports - Completed', pageWidth / 2, 20, { align: 'center' });
       
-      // Add some simple text for each report
-      let yPos = 40;
-      for (let i = 0; i < Math.min(reports.length, 3); i++) { // Limit to 3 reports for testing
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Period: ${startDate} to ${endDate}`, pageWidth / 2, 30, { align: 'center' });
+      pdf.text(`Total Reports: ${reports.length}`, pageWidth / 2, 40, { align: 'center' });
+      
+      let yPosition = 55;
+      
+      for (let i = 0; i < reports.length; i++) {
         const report = reports[i];
-        pdf.setFontSize(12);
-        pdf.text(`${i + 1}. ${report.client_name} - ${report.status}`, 20, yPos);
-        yPos += 10;
+        
+        // Check if we need a new page
+        if (yPosition > pageHeight - 100) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        // Report header
+        pdf.setFontSize(16);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(`Report ${i + 1}: ${report.client_name}`, 15, yPosition);
+        yPosition += 10;
+        
+        // Create data table for report details
+        const reportData = [
+          ['Date Completed', formatLATime(report.completion_date || report.request_date)],
+          ['Client Name', report.client_name],
+          ['Client Address', report.client_address || 'N/A'],
+          ['Employee', report.employee_name || 'N/A'],
+          ['Priority', report.priority],
+          ['Description', report.description || 'N/A']
+        ];
+        
+        // Add financial information if available
+        if (report.total_cost || report.parts_cost) {
+          reportData.push(['Total Cost', `$${formatCurrency(report.total_cost || 0)}`]);
+          reportData.push(['Parts Cost', `$${formatCurrency(report.parts_cost || 0)}`]);
+          reportData.push(['Gross Profit', `$${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}`]);
+        }
+        
+        // Add notes if available
+        if (report.employee_notes) {
+          reportData.push(['Employee Notes', report.employee_notes]);
+        }
+        
+        if (report.admin_notes) {
+          reportData.push(['Admin Notes', report.admin_notes]);
+        }
+        
+        // Use autoTable for clean formatting
+        pdf.autoTable({
+          startY: yPosition,
+          head: [],
+          body: reportData,
+          theme: 'grid',
+          headStyles: { fillColor: [50, 50, 50] },
+          styles: { 
+            fontSize: 10, 
+            cellPadding: 3,
+            overflow: 'linebreak',
+            cellWidth: 'wrap'
+          },
+          columnStyles: {
+            0: { fontStyle: 'bold', cellWidth: 40, fillColor: [240, 240, 240] },
+            1: { cellWidth: 'auto' }
+          },
+          margin: { left: 15, right: 15 },
+          didDrawPage: function (data) {
+            yPosition = data.cursor.y + 5;
+          }
+        });
+        
+        // Add photos section
+        if (report.photos && report.photos.length > 0) {
+          // Check if we need a new page for photos
+          if (yPosition > pageHeight - 80) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.setFontSize(12);
+          pdf.setFont(undefined, 'bold');
+          pdf.text(`Photos (${report.photos.length}):`, 15, yPosition);
+          yPosition += 10;
+          
+          const photosPerRow = 2;
+          const photoWidth = 60;
+          const photoHeight = 45;
+          const startX = 15;
+          
+          for (let j = 0; j < report.photos.length; j++) {
+            try {
+              const photoData = report.photos[j];
+              const row = Math.floor(j / photosPerRow);
+              const col = j % photosPerRow;
+              const x = startX + col * (photoWidth + 10);
+              const y = yPosition + row * (photoHeight + 10);
+              
+              // Check if we need a new page for this photo
+              if (y + photoHeight > pageHeight - 20) {
+                pdf.addPage();
+                yPosition = 20;
+                const newY = yPosition + row * (photoHeight + 10);
+                pdf.addImage(photoData, 'JPEG', x, newY, photoWidth, photoHeight);
+              } else {
+                pdf.addImage(photoData, 'JPEG', x, y, photoWidth, photoHeight);
+              }
+              
+              // Add photo number
+              pdf.setFontSize(8);
+              pdf.text(`Photo ${j + 1}`, x, y + photoHeight + 5);
+              
+            } catch (error) {
+              console.warn(`Failed to add photo ${j + 1}:`, error);
+              // Add placeholder text instead
+              pdf.setFontSize(10);
+              pdf.text(`[Photo ${j + 1} - Error loading]`, startX + (j % photosPerRow) * 70, yPosition + Math.floor(j / photosPerRow) * 20);
+            }
+          }
+          
+          yPosition += Math.ceil(report.photos.length / photosPerRow) * (photoHeight + 15);
+        }
+        
+        // Add separator between reports
+        if (i < reports.length - 1) {
+          pdf.setLineWidth(0.5);
+          pdf.setDrawColor(200, 200, 200);
+          pdf.line(15, yPosition + 5, pageWidth - 15, yPosition + 5);
+          yPosition += 15;
+        }
       }
       
-      console.log('Report data added');
-      
       // Save the PDF
-      pdf.save(`test_report_${Date.now()}.pdf`);
-      console.log('PDF saved successfully');
+      const fileName = `service_reports_${startDate}_to_${endDate}.pdf`;
+      pdf.save(fileName);
+      console.log('PDF saved successfully:', fileName);
       
     } catch (error) {
       console.error('Error in generatePDF:', error);
