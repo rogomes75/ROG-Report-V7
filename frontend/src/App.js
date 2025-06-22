@@ -2646,7 +2646,7 @@ const ReportsDownload = () => {
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Reports Download</h2>
-        <p className="text-gray-600 mt-1">Download completed service reports as CSV</p>
+        <p className="text-gray-600 mt-1">Download completed service reports as PDF with photos</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
