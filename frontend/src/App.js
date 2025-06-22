@@ -2718,13 +2718,13 @@ const ReportsDownload = () => {
           >
             {isGenerating ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Generating...</span>
+                <span>📄</span>
+                <span>Generate PDF...</span>
               </>
             ) : (
               <>
-                <span>📊</span>
-                <span>Download Report</span>
+                <span>📄</span>
+                <span>Download PDF Report</span>
               </>
             )}
           </button>
