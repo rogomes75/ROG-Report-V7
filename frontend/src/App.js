@@ -365,6 +365,7 @@ const ServiceReports = () => {
   const [selectedUserFilter, setSelectedUserFilter] = useState('');
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [showMediaViewer, setShowMediaViewer] = useState(false);
+  const [currentMedia, setCurrentMedia] = useState({ src: '', type: '' });
 
   // Form states
   const [selectedClient, setSelectedClient] = useState('');
