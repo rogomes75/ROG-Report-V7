@@ -1345,6 +1345,17 @@ const ServicesConcluded = () => {
   const [showMediaViewer, setShowMediaViewer] = useState(false);
   const [currentMedia, setCurrentMedia] = useState({ src: '', type: '' });
 
+  const updateAdminNotes = async (reportId, notes) => {
+    try {
+      await axios.put(`${API}/reports/${reportId}`, {
+        admin_notes: notes
+      });
+      fetchCompletedReports();
+    } catch (error) {
+      console.error('Failed to update admin notes:', error);
+    }
+  };
+
   const openMediaViewer = (src, type) => {
     setCurrentMedia({ src, type });
     setShowMediaViewer(true);
