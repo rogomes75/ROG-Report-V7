@@ -1086,8 +1086,8 @@ const ServiceReports = () => {
                   <video
                     key={index}
                     src={video}
-                    className="w-full h-32 object-cover rounded-lg"
-                    controls
+                    className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80"
+                    onClick={() => openMediaViewer(video, 'video')}
                   />
                 ))}
               </div>
