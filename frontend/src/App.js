@@ -1724,6 +1724,8 @@ const ClientsManagement = () => {
   const [showAddClient, setShowAddClient] = useState(false);
   const [newClient, setNewClient] = useState({ name: '', address: '', employee_id: '' });
   const [isCreating, setIsCreating] = useState(false);
+  const [employeeFilter, setEmployeeFilter] = useState('');
+  const [filteredClients, setFilteredClients] = useState([]);
   const { user } = useAuth();
 
   useEffect(() => {
