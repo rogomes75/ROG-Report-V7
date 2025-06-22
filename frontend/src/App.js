@@ -2472,6 +2472,224 @@ const Calendar = () => {
     </div>
   );
 };
+
+const ReportsDownload = () => {
+  const { user } = useAuth();
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [selectedClient, setSelectedClient] = useState('');
+  const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [clients, setClients] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  useEffect(() => {
+    fetchClients();
+    fetchEmployees();
+  }, []);
+
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get(`${API}/clients`);
+      setClients(response.data);
+    } catch (error) {
+      console.error('Failed to fetch clients:', error);
+    }
+  };
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await axios.get(`${API}/users`);
+      setEmployees(response.data.filter(u => u.role === 'employee'));
+    } catch (error) {
+      console.error('Failed to fetch employees:', error);
+    }
+  };
+
+  const generateReport = async () => {
+    if (!startDate || !endDate) {
+      alert('Please select both start and end dates');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      let query = `?start_date=${startDate}&end_date=${endDate}`;
+      if (selectedClient && selectedClient !== 'all') {
+        query += `&client_name=${encodeURIComponent(selectedClient)}`;
+      }
+      if (selectedEmployee && selectedEmployee !== 'all') {
+        query += `&employee_id=${selectedEmployee}`;
+      }
+
+      const response = await axios.get(`${API}/reports/completed${query}`);
+      const reports = response.data;
+
+      if (reports.length === 0) {
+        alert('No completed reports found for the selected criteria');
+        setIsGenerating(false);
+        return;
+      }
+
+      // Generate CSV content
+      const csvContent = generateCSV(reports);
+      
+      // Download CSV
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `completed_reports_${startDate}_to_${endDate}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (error) {
+      console.error('Failed to generate report:', error);
+      alert('Failed to generate report');
+    }
+    setIsGenerating(false);
+  };
+
+  const generateCSV = (reports) => {
+    const headers = [
+      'Date Completed',
+      'Client Name', 
+      'Client Address',
+      'Employee',
+      'Priority',
+      'Description',
+      'Total Cost',
+      'Parts Cost', 
+      'Gross Profit',
+      'Admin Notes',
+      'Employee Notes'
+    ];
+
+    const rows = reports.map(report => [
+      formatLATime(report.completion_date || report.request_date),
+      `"${report.client_name}"`,
+      `"${report.client_address || ''}"`,
+      `"${report.employee_name}"`,
+      `"${report.priority}"`,
+      `"${report.description.replace(/"/g, '""')}"`,
+      formatCurrency(report.total_cost || 0),
+      formatCurrency(report.parts_cost || 0),
+      formatCurrency((report.total_cost || 0) - (report.parts_cost || 0)),
+      `"${(report.admin_notes || '').replace(/"/g, '""')}"`,
+      `"${(report.employee_notes || '').replace(/"/g, '""')}"`
+    ]);
+
+    return [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Reports Download</h2>
+        <p className="text-gray-600 mt-1">Download completed service reports as CSV</p>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Filter Options</h3>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
+            <select
+              value={selectedClient}
+              onChange={(e) => setSelectedClient(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option value="">All Clients</option>
+              <option value="all">All Clients</option>
+              {clients.map(client => (
+                <option key={client.id} value={client.name}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Employee</label>
+            <select
+              value={selectedEmployee}
+              onChange={(e) => setSelectedEmployee(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option value="">All Employees</option>
+              <option value="all">All Employees</option>
+              {employees.map(employee => (
+                <option key={employee.id} value={employee.id}>
+                  {employee.username}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
+        <div className="flex justify-center">
+          <button
+            onClick={generateReport}
+            disabled={isGenerating}
+            className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center space-x-2"
+          >
+            {isGenerating ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Generating...</span>
+              </>
+            ) : (
+              <>
+                <span>📊</span>
+                <span>Download Report</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-blue-50 rounded-lg p-4">
+        <h4 className="font-semibold text-blue-800 mb-2">Report Contents:</h4>
+        <ul className="text-blue-700 text-sm space-y-1">
+          <li>• Date Completed</li>
+          <li>• Client Information (Name, Address)</li>
+          <li>• Employee Name</li>
+          <li>• Priority Level</li>
+          <li>• Service Description</li>
+          <li>• Financial Details (Total Cost, Parts Cost, Gross Profit)</li>
+          <li>• Admin and Employee Notes</li>
+          <li>• Photos and videos are not included in CSV export</li>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('reports');
