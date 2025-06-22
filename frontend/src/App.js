@@ -1604,7 +1604,7 @@ const ServicesConcluded = () => {
                   </div>
                   <div>
                     <span className="text-blue-700">Gross Profit: </span>
-                    <span className="font-medium">${((report.total_cost || 0) - (report.parts_cost || 0)).toFixed(2)}</span>
+                    <span className="font-medium">${formatCurrency((report.total_cost || 0) - (report.parts_cost || 0))}</span>
                   </div>
                 </div>
               </div>
