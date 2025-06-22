@@ -1846,6 +1846,16 @@ const ClientsManagement = () => {
     setIsCreating(false);
   };
 
+  const getEmployeeName = (employeeId) => {
+    if (!employeeId) return 'Unassigned';
+    const employee = users.find(u => u.id === employeeId);
+    return employee ? employee.username : 'Unknown';
+  };
+
+  const getEmployeeClientCount = (employeeId) => {
+    return clients.filter(client => client.employee_id === employeeId).length;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
