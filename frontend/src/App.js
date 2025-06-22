@@ -2,6 +2,8 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import './App.css';
 import axios from 'axios';
 import moment from 'moment-timezone';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 const API = `/api`;
