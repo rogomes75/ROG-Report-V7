@@ -470,6 +470,16 @@ const ServiceReports = () => {
     setVideos(prev => prev.filter((_, i) => i !== index));
   };
 
+  const openMediaViewer = (src, type) => {
+    setCurrentMedia({ src, type });
+    setShowMediaViewer(true);
+  };
+
+  const closeMediaViewer = () => {
+    setShowMediaViewer(false);
+    setCurrentMedia({ src: '', type: '' });
+  };
+
   const resetForm = () => {
     setSelectedClient('');
     setDescription('');
