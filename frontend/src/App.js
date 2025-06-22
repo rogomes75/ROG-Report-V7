@@ -2051,6 +2051,14 @@ const ClientsManagement = () => {
         </div>
       </div>
 
+      {filteredClients.length === 0 && clients.length > 0 && (
+        <div className="text-center py-12">
+          <div className="text-4xl sm:text-6xl mb-4">🔍</div>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No clients found</h3>
+          <p className="text-gray-600 text-sm sm:text-base px-4">Try changing the employee filter to see more clients.</p>
+        </div>
+      )}
+
       {clients.length === 0 && (
         <div className="text-center py-12">
           <div className="text-4xl sm:text-6xl mb-4">👥</div>
