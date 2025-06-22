@@ -1600,7 +1600,7 @@ const ServicesConcluded = () => {
                   </div>
                   <div>
                     <span className="text-blue-700">Cost of Services: </span>
-                    <span className="font-medium">${report.parts_cost?.toFixed(2) || '0.00'}</span>
+                    <span className="font-medium">${formatCurrency(report.parts_cost || 0)}</span>
                   </div>
                   <div>
                     <span className="text-blue-700">Gross Profit: </span>
