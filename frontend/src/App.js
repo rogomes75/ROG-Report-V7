@@ -1646,7 +1646,7 @@ const ClientsManagement = () => {
       
       fetchClients();
       setShowAddClient(false);
-      setNewClient({ name: '', address: '' });
+      setNewClient({ name: '', address: '', employee_id: '' });
       alert('Client created successfully!');
     } catch (error) {
       console.error('Failed to create client:', error);
