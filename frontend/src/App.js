@@ -1617,15 +1617,6 @@ const ServicesConcluded = () => {
               </div>
             )}
 
-            {/* Media Viewer Modal */}
-                  }}
-                  className="w-full px-3 py-2 border border-green-300 rounded-lg text-sm focus:ring-1 focus:ring-green-500 outline-none bg-white"
-                  placeholder="Add admin notes..."
-                  rows="3"
-                />
-              </div>
-            )}
-
             {/* Admin Notes for Admin (with all data) */}
             {user?.role === 'admin' && report.admin_notes && (
               <div className="mb-4 p-3 bg-green-50 rounded-lg">
