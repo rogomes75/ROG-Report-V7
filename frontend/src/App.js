@@ -1278,6 +1278,18 @@ const ServicesConcluded = () => {
   const [searchEmployee, setSearchEmployee] = useState('');
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMediaViewer, setShowMediaViewer] = useState(false);
+  const [currentMedia, setCurrentMedia] = useState({ src: '', type: '' });
+
+  const openMediaViewer = (src, type) => {
+    setCurrentMedia({ src, type });
+    setShowMediaViewer(true);
+  };
+
+  const closeMediaViewer = () => {
+    setShowMediaViewer(false);
+    setCurrentMedia({ src: '', type: '' });
+  };
 
   useEffect(() => {
     fetchCompletedReports();
