@@ -1866,6 +1866,23 @@ const ClientsManagement = () => {
         </div>
       </div>
 
+      {/* Employee Filter */}
+      {user?.role === 'admin' && (
+        <div className="mb-6">
+          <select
+            value={employeeFilter}
+            onChange={(e) => setEmployeeFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          >
+            <option value="">All Employees</option>
+            <option value="unassigned">Unassigned Clients</option>
+            {users.filter(u => u.role === 'employee').map(employee => (
+              <option key={employee.id} value={employee.id}>{employee.username}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Upload Modal */}
       {showUpload && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
