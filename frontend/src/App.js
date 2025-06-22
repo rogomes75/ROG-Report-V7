@@ -1352,7 +1352,7 @@ const ServicesConcluded = () => {
     
     if (searchClient) {
       filtered = filtered.filter(report => 
-        report.client_name.toLowerCase().includes(searchClient.toLowerCase())
+        report.client_name === searchClient
       );
     }
     
