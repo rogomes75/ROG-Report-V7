@@ -652,56 +652,57 @@ const ServiceReports = () => {
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div className="flex-1">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Service Reports</h2>
-          <p className="text-sm text-gray-600 mt-1">Period: {getReportPeriod()}</p>
-          <div className="mt-2 flex flex-wrap gap-4 text-sm">
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-              Scheduled: {filteredReports.filter(r => r.status === 'scheduled').length}
-            </span>
-            <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
-              In Progress: {filteredReports.filter(r => r.status === 'in_progress').length}
-            </span>
-            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-              Reported: {filteredReports.filter(r => r.status === 'reported').length}
-            </span>
-          </div>
-          
-          {/* User Filter for Admin */}
-          {user?.role === 'admin' && (
-            <div className="mt-3">
-              <select
-                value={selectedUserFilter}
-                onChange={(e) => setSelectedUserFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="">All Users</option>
-                {users.map(user => (
-                  <option key={user.id} value={user.id}>{user.username}</option>
-                ))}
-              </select>
+        <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Service Reports</h2>
+              {user?.role === 'employee' && (
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center space-x-1"
+                >
+                  <span>+</span>
+                  <span>Report</span>
+                </button>
+              )}
+              {user?.role === 'admin' && (
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition"
+                >
+                  + Report
+                </button>
+              )}
             </div>
-          )}
-        </div>
-        
-        <div className="flex gap-2">
-          {user?.role === 'employee' && (
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition flex items-center space-x-2"
-            >
-              <span>+</span>
-              <span>New Report</span>
-            </button>
-          )}
-          {user?.role === 'admin' && (
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition"
-            >
-              + Report
-            </button>
-          )}
+            <p className="text-sm text-gray-600 mt-1">Period: {getReportPeriod()}</p>
+            <div className="mt-2 flex flex-wrap gap-4 text-sm">
+              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                Scheduled: {filteredReports.filter(r => r.status === 'scheduled').length}
+              </span>
+              <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
+                In Progress: {filteredReports.filter(r => r.status === 'in_progress').length}
+              </span>
+              <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+                Reported: {filteredReports.filter(r => r.status === 'reported').length}
+              </span>
+            </div>
+            
+            {/* User Filter for Admin */}
+            {user?.role === 'admin' && (
+              <div className="mt-3">
+                <select
+                  value={selectedUserFilter}
+                  onChange={(e) => setSelectedUserFilter(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="">All Users</option>
+                  {users.map(user => (
+                    <option key={user.id} value={user.id}>{user.username}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
