@@ -201,9 +201,9 @@ frontend:
         
   - task: "Service report creation form"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/App.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -213,6 +213,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "Cannot test this functionality as login is not working. The issue is with the API URL configuration preventing frontend-backend communication."
+      - working: true
+        agent: "testing"
+        comment: "Service report creation form is now working correctly. The API URL configuration has been fixed, allowing proper frontend-backend communication. The form includes client selection, priority dropdown, description textarea, and photo upload functionality as expected."
         
   - task: "Admin dashboard for report management"
     implemented: true
