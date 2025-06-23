@@ -231,6 +231,16 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                       : 'text-gray-600 hover:text-blue-600'
                   }`}
                 >
+                  Users
+                </button>
+                <button
+                  onClick={() => setActiveTab('calendar')}
+                  className={`px-4 py-2 rounded-lg font-medium transition ${
+                    activeTab === 'calendar'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-600 hover:text-blue-600'
+                  }`}
+                >
                   Financial
                 </button>
                 <button
