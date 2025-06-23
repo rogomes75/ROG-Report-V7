@@ -845,6 +845,7 @@ const ServiceReports = () => {
                           src={video}
                           className="w-full h-32 object-cover rounded-lg"
                           controls
+                          preload="metadata"
                         />
                         <button
                           type="button"
