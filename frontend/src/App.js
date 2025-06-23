@@ -783,10 +783,9 @@ const ServiceReports = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-24 sm:h-32 resize-none text-sm sm:text-base"
+                  readOnly
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-gray-100 h-24 sm:h-32 resize-none text-sm sm:text-base cursor-not-allowed"
                   placeholder="Describe the maintenance issue..."
-                  required
                 />
               </div>
 
