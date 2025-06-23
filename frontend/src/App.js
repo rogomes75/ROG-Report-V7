@@ -1081,6 +1081,7 @@ const ServiceReports = () => {
                 )}
                 <p className="text-gray-600 text-sm sm:text-base">By: {report.employee_name}</p>
                 <p className="text-xs sm:text-sm text-gray-500">
+                  Created: {formatLATime(report.request_date)} at {formatLATimeOnly(report.request_date)}
                   Created: {formatLATime(report.request_date)} at {report.created_time || formatLATimeOnly(report.request_date)}
                 </p>
                 {report.last_modified && (
