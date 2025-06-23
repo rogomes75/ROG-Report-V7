@@ -197,7 +197,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                   : 'text-gray-600 hover:text-blue-600'
               }`}
             >
-              Reports
+              Services Reported
             </button>
             
             <button
@@ -208,7 +208,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                   : 'text-gray-600 hover:text-blue-600'
               }`}
             >
-              Completed
+              Services Completed
             </button>
             
             {user?.role === 'admin' && (
@@ -221,7 +221,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                       : 'text-gray-600 hover:text-blue-600'
                   }`}
                 >
-                  Clients
+                  Clients Management
                 </button>
                 <button
                   onClick={() => setActiveTab('users')}
@@ -231,17 +231,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                       : 'text-gray-600 hover:text-blue-600'
                   }`}
                 >
-                  Users
-                </button>
-                <button
-                  onClick={() => setActiveTab('calendar')}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
-                    activeTab === 'calendar'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-600 hover:text-blue-600'
-                  }`}
-                >
-                  Calendar
+                  Financial
                 </button>
                 <button
                   onClick={() => setActiveTab('reports-download')}
