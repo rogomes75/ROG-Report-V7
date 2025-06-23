@@ -264,10 +264,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Authentication system with JWT"
-    - "Service reports with photo upload"
-    - "MongoDB database integration"
-  stuck_tasks: []
+    - "Authentication UI with login form"
+  stuck_tasks:
+    - "Authentication UI with login form"
+    - "Service report creation form"
+    - "Admin dashboard for report management"
+    - "Client management interface"
+    - "User management interface"
   test_all: true
   test_priority: "high_first"
 
