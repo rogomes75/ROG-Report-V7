@@ -896,7 +896,10 @@ const ServiceReports = () => {
                 <select
                   value={selectedClient}
                   onChange={(e) => setSelectedClient(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+                  disabled={editingReport?.status === 'reported'}
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base ${
+                    editingReport?.status === 'reported' ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
                   required
                 >
                   <option value="">Select a client</option>
