@@ -715,6 +715,9 @@ const ServiceReports = () => {
             <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
               In Progress: {filteredReports.filter(r => r.status === 'in_progress').length}
             </span>
+            <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full">
+              Late: {filteredReports.filter(r => getReportFlag(r) === '🔴').length}
+            </span>
             <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
               Reported: {filteredReports.filter(r => r.status === 'reported').length}
             </span>
