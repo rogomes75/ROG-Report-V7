@@ -6,12 +6,12 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
-const API = `/api`;
+const API = `${BACKEND_URL}/api`;
 
 // Debug logging
 console.log('BACKEND_URL:', BACKEND_URL);
 console.log('API URL:', API);
-console.log('Using proxy setup for API calls');
+console.log('Using full backend URL for API calls');
 
 // Utility function to format LA time - Fixed timezone issue
 const formatLATime = (date) => {
