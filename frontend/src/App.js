@@ -2817,6 +2817,7 @@ const Dashboard = () => {
         {activeTab === 'completed' && <ServicesConcluded />}
         {activeTab === 'clients' && user?.role === 'admin' && <ClientsManagement />}
         {activeTab === 'users' && user?.role === 'admin' && <UsersManagement />}
+        {activeTab === 'calendar' && user?.role === 'admin' && <Calendar />}
         {activeTab === 'reports-download' && user?.role === 'admin' && <ReportsDownload />}
       </main>
     </div>
