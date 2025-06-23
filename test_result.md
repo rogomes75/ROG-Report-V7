@@ -183,63 +183,78 @@ backend:
 frontend:
   - task: "Authentication UI with login form"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Login form with AuthContext, token management, role-based navigation. Beautiful gradient design with error handling."
+      - working: false
+        agent: "testing"
+        comment: "Login page loads correctly with 'ROG Pool Service' title, but login functionality fails. The issue is with API URL configuration. The frontend is making API calls to '/api/auth/login' which is being sent to the same domain as the frontend, but the backend API is at a different URL. Direct API call to the backend URL works correctly, confirming the backend is functional but frontend-backend communication is broken."
         
   - task: "Service report creation form"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Modal form with client selection, priority dropdown, description textarea, mobile-optimized photo upload (up to 5), photo preview/removal."
+      - working: false
+        agent: "testing"
+        comment: "Cannot test this functionality as login is not working. The issue is with the API URL configuration preventing frontend-backend communication."
         
   - task: "Admin dashboard for report management"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Status update buttons, admin notes with auto-save, photo gallery view, priority/status badges, responsive design."
+      - working: false
+        agent: "testing"
+        comment: "Cannot test this functionality as login is not working. The issue is with the API URL configuration preventing frontend-backend communication."
         
   - task: "Client management interface"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Excel upload modal, client table with alphabetical sorting, responsive design."
+      - working: false
+        agent: "testing"
+        comment: "Cannot test this functionality as login is not working. The issue is with the API URL configuration preventing frontend-backend communication."
         
   - task: "User management interface"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "User creation form, user table with role badges, delete functionality (protecting admin user)."
+      - working: false
+        agent: "testing"
+        comment: "Cannot test this functionality as login is not working. The issue is with the API URL configuration preventing frontend-backend communication."
 
 metadata:
   created_by: "main_agent"
