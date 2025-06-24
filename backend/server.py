@@ -1,5 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, File, UploadFile, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -29,10 +31,11 @@ def get_la_time():
 def get_la_time_str():
     return get_la_time().strftime("%H:%M")
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+# MongoDB connection - using environment variables with defaults for Railway
+mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
+db_name = os.environ.get('DB_NAME', 'pool_maintenance_db')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[db_name]
 
 # Security
 SECRET_KEY = "pool_maintenance_secret_key_2024"
