@@ -413,10 +413,36 @@ async def delete_service_report(report_id: str, current_user: User = Depends(get
 # Include the router in the main app
 app.include_router(api_router)
 
+# Mount static files for production
+static_dir = Path(__file__).parent.parent / "frontend" / "build"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=static_dir / "static"), name="static")
+    
+    @app.get("/{catchall:path}")
+    async def serve_spa(catchall: str):
+        # Serve API routes normally
+        if catchall.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+        
+        # For all other routes, serve the React app
+        index_file = static_dir / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+        else:
+            raise HTTPException(status_code=404, detail="Frontend not built")
+    
+    @app.get("/")
+    async def serve_root():
+        index_file = static_dir / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+        else:
+            return {"message": "ROG Pool Service API - Frontend not available"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*", "http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
