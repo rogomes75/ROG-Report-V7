@@ -32,11 +32,20 @@ def get_la_time():
 def get_la_time_str():
     return get_la_time().strftime("%H:%M")
 
-# MongoDB connection - using environment variables with defaults for Railway
-mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
+# MongoDB connection - Railway Plugin Priority
+mongo_url = os.environ.get('DATABASE_URL', os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
 db_name = os.environ.get('DB_NAME', 'pool_maintenance_db')
-client = AsyncIOMotorClient(mongo_url)
-db = client[db_name]
+
+# Add error handling for MongoDB connection
+try:
+    client = AsyncIOMotorClient(mongo_url)
+    db = client[db_name]
+    logging.info(f"MongoDB connected to: {mongo_url}")
+except Exception as e:
+    logging.error(f"MongoDB connection failed: {e}")
+    # Use fallback for development
+    client = AsyncIOMotorClient('mongodb://localhost:27017')
+    db = client['pool_maintenance_db']
 
 # Security
 SECRET_KEY = "pool_maintenance_secret_key_2024"
