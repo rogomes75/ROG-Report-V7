@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test específico para app1.rogpoolservice.com
+Test específico para app5.rogpoolservice.com
 """
 
 import requests
@@ -8,7 +8,7 @@ import time
 import sys
 
 def test_app():
-    base_url = "https://app1.rogpoolservice.com"
+    base_url = "https://app5.rogpoolservice.com"
     api_url = f"{base_url}/api"
     
     print(f"🧪 Testing ROG Pool Service at: {base_url}")
@@ -41,43 +41,23 @@ def test_app():
         print(f"  ❌ API connection error: {e}")
         return False
     
-    # Test 3: Authentication
-    print("🔐 Testing login...")
+    # Test 3: Health Check
+    print("🔍 Testing health endpoint...")
     try:
-        login_data = {"username": "admin", "password": "admin123"}
-        response = requests.post(f"{api_url}/auth/login", json=login_data, timeout=30)
+        response = requests.get(f"{api_url}/health", timeout=30)
         if response.status_code == 200:
             data = response.json()
-            if "access_token" in data:
-                print("  ✅ Login working - admin user authenticated")
-                token = data["access_token"]
-                
-                # Test authenticated endpoint
-                headers = {"Authorization": f"Bearer {token}"}
-                response = requests.get(f"{api_url}/auth/me", headers=headers, timeout=30)
-                if response.status_code == 200:
-                    user = response.json()
-                    print(f"  ✅ User profile: {user.get('username')} ({user.get('role')})")
-                else:
-                    print(f"  ⚠️  User profile failed: {response.status_code}")
-                
-                return True
-            else:
-                print("  ❌ Login response invalid")
-                return False
+            print(f"  ✅ Health check: {data.get('status')} - DB: {data.get('database')}")
+            return True
         else:
-            print(f"  ❌ Login failed: {response.status_code}")
-            if response.status_code == 401:
-                print("    💡 Admin user might not be created in database")
-            elif response.status_code == 500:
-                print("    💡 Possible database connection issue")
+            print(f"  ⚠️  Health check failed: {response.status_code}")
             return False
     except Exception as e:
-        print(f"  ❌ Login error: {e}")
+        print(f"  ❌ Health check error: {e}")
         return False
 
 def main():
-    print("🚀 ROG Pool Service - Production Test")
+    print("🚀 ROG Pool Service - Production Test (APP5)")
     print("=" * 60)
     
     success = test_app()
@@ -85,17 +65,16 @@ def main():
     print("\n" + "=" * 60)
     if success:
         print("🎉 ALL TESTS PASSED!")
-        print("\n💡 Your app is working correctly!")
-        print("🔑 Login at: https://app1.rogpoolservice.com")
-        print("   Username: admin")
-        print("   Password: admin123")
+        print("\n💡 Your simplified app is working correctly!")
+        print("🔗 Access at: https://app5.rogpoolservice.com")
+        print("🔗 API at: https://app5.rogpoolservice.com/api/")
     else:
         print("❌ TESTS FAILED!")
         print("\n🔧 Possible issues:")
+        print("   - Check Railway deployment logs")
+        print("   - Verify MongoDB plugin is added")
         print("   - Check Railway environment variables")
-        print("   - Verify MongoDB connection")
-        print("   - Check Railway logs for errors")
-        print("   - Ensure all services are running")
+        print("   - Ensure build completed successfully")
     
     print("=" * 60)
     return success
