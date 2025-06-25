@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
 from typing import List, Optional
 import os
@@ -12,16 +11,18 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# MongoDB connection
-mongo_url = os.environ.get('DATABASE_URL', os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
-db_name = os.environ.get('DB_NAME', 'pool_maintenance_db')
-
+# MongoDB connection - with error handling
 try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+    mongo_url = os.environ.get('DATABASE_URL', os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
+    db_name = os.environ.get('DB_NAME', 'pool_maintenance_db')
     client = AsyncIOMotorClient(mongo_url)
     db = client[db_name]
+    mongodb_available = True
     logger.info("MongoDB connection initialized successfully")
 except Exception as e:
     logger.error(f"MongoDB connection error: {e}")
+    mongodb_available = False
     client = None
     db = None
 
@@ -41,8 +42,8 @@ class ServiceReport(BaseModel):
     client_id: str
     title: str
     description: str
-    status: str = "reported"  # reported, scheduled, in_progress, completed
-    priority: str = "NORMAL"  # URGENT, SAME_WEEK, NEXT_WEEK, NORMAL
+    status: str = "reported"
+    priority: str = "NORMAL"
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
@@ -52,7 +53,8 @@ def read_root():
         "message": "ROG Pool Service is running with MongoDB!", 
         "status": "OK", 
         "version": "2.0",
-        "database": "connected" if db else "disconnected"
+        "database": "connected" if mongodb_available else "disconnected",
+        "mongodb_available": mongodb_available
     }
 
 @app.get("/api/")
@@ -61,25 +63,28 @@ def api_root():
         "message": "ROG Pool Service API with Database", 
         "status": "healthy", 
         "endpoints": ["/", "/api/", "/health", "/clients", "/reports"],
-        "database": "connected" if db else "disconnected"
+        "database": "connected" if mongodb_available else "disconnected"
     }
 
 @app.get("/health")
 async def health_check():
     db_status = "disconnected"
-    if db:
+    db_details = {"configured": mongodb_available, "connection_url": bool(os.environ.get('DATABASE_URL'))}
+    
+    if mongodb_available and db:
         try:
             # Test database connection
             await db.test_collection.find_one()
             db_status = "connected"
         except Exception as e:
             db_status = f"error: {str(e)}"
+            db_details["error"] = str(e)
     
     return {
         "status": "healthy", 
         "service": "rog-pool-service", 
         "database": db_status,
-        "mongodb_url_configured": bool(mongo_url),
+        "database_details": db_details,
         "port": os.environ.get("PORT", "8000")
     }
 
@@ -88,29 +93,29 @@ def test_endpoint():
     return {
         "message": "Test endpoint working!", 
         "railway": "deployed",
-        "mongodb": "integrated",
-        "collections": ["clients", "service_reports", "users"]
+        "mongodb": "integrated" if mongodb_available else "not_available",
+        "collections": ["clients", "service_reports", "users"] if mongodb_available else []
     }
 
 # MongoDB Collections Endpoints
-@app.get("/api/clients", response_model=List[Client])
+@app.get("/api/clients")
 async def get_clients():
-    if not db:
+    if not mongodb_available or not db:
         raise HTTPException(status_code=503, detail="Database not available")
     
     try:
         clients = []
         async for client in db.clients.find():
-            client['_id'] = str(client['_id'])  # Convert ObjectId to string
-            clients.append(Client(**client))
+            client['_id'] = str(client['_id'])
+            clients.append(client)
         return clients
     except Exception as e:
         logger.error(f"Error fetching clients: {e}")
-        raise HTTPException(status_code=500, detail="Error fetching clients")
+        raise HTTPException(status_code=500, detail=f"Error fetching clients: {str(e)}")
 
-@app.post("/api/clients", response_model=Client)
+@app.post("/api/clients")
 async def create_client(client: Client):
-    if not db:
+    if not mongodb_available or not db:
         raise HTTPException(status_code=503, detail="Database not available")
     
     try:
@@ -120,26 +125,26 @@ async def create_client(client: Client):
         return client
     except Exception as e:
         logger.error(f"Error creating client: {e}")
-        raise HTTPException(status_code=500, detail="Error creating client")
+        raise HTTPException(status_code=500, detail=f"Error creating client: {str(e)}")
 
-@app.get("/api/reports", response_model=List[ServiceReport])
+@app.get("/api/reports")
 async def get_reports():
-    if not db:
+    if not mongodb_available or not db:
         raise HTTPException(status_code=503, detail="Database not available")
     
     try:
         reports = []
         async for report in db.service_reports.find():
-            report['_id'] = str(report['_id'])  # Convert ObjectId to string
-            reports.append(ServiceReport(**report))
+            report['_id'] = str(report['_id'])
+            reports.append(report)
         return reports
     except Exception as e:
         logger.error(f"Error fetching reports: {e}")
-        raise HTTPException(status_code=500, detail="Error fetching reports")
+        raise HTTPException(status_code=500, detail=f"Error fetching reports: {str(e)}")
 
-@app.post("/api/reports", response_model=ServiceReport)
+@app.post("/api/reports")
 async def create_report(report: ServiceReport):
-    if not db:
+    if not mongodb_available or not db:
         raise HTTPException(status_code=503, detail="Database not available")
     
     try:
@@ -149,12 +154,11 @@ async def create_report(report: ServiceReport):
         return report
     except Exception as e:
         logger.error(f"Error creating report: {e}")
-        raise HTTPException(status_code=500, detail="Error creating report")
+        raise HTTPException(status_code=500, detail=f"Error creating report: {str(e)}")
 
-# Create sample data endpoint
 @app.post("/api/init-data")
 async def initialize_sample_data():
-    if not db:
+    if not mongodb_available or not db:
         raise HTTPException(status_code=503, detail="Database not available")
     
     try:
@@ -175,7 +179,7 @@ async def initialize_sample_data():
             },
             {
                 "id": str(uuid.uuid4()),
-                "name": "Maria Santos",
+                "name": "Maria Santos", 
                 "address": "Av. Paulista, 456",
                 "phone": "(11) 88888-8888",
                 "email": "maria@email.com",
@@ -183,10 +187,8 @@ async def initialize_sample_data():
             }
         ]
         
-        # Insert sample clients
         await db.clients.insert_many(sample_clients)
         
-        # Create sample service report
         sample_report = {
             "id": str(uuid.uuid4()),
             "client_id": sample_clients[0]["id"],
@@ -207,44 +209,44 @@ async def initialize_sample_data():
         }
     except Exception as e:
         logger.error(f"Error initializing data: {e}")
-        raise HTTPException(status_code=500, detail="Error initializing sample data")
+        raise HTTPException(status_code=500, detail=f"Error initializing sample data: {str(e)}")
 
-# Serve a simple HTML page for browser testing
 @app.get("/html", response_class=HTMLResponse)
 def html_page():
-    return """
+    return f"""
     <html>
         <head><title>ROG Pool Service - MongoDB Integration</title></head>
         <body style="font-family: Arial, sans-serif; margin: 40px;">
             <h1>🏊‍♂️ ROG Pool Service</h1>
             <h2>✅ API with MongoDB Integration</h2>
             <p><strong>Status:</strong> Running successfully!</p>
+            <p><strong>MongoDB:</strong> {'✅ Available' if mongodb_available else '❌ Not Available'}</p>
             
             <h3>🔗 API Endpoints:</h3>
             <ul>
                 <li><a href="/api/">API Root</a></li>
                 <li><a href="/health">Health Check</a></li>
                 <li><a href="/test">Test Endpoint</a></li>
-                <li><a href="/api/clients">View Clients</a></li>
-                <li><a href="/api/reports">View Reports</a></li>
-                <li><a href="/api/init-data" onclick="initData()">Initialize Sample Data</a></li>
+                {"<li><a href='/api/clients'>View Clients</a></li>" if mongodb_available else ""}
+                {"<li><a href='/api/reports'>View Reports</a></li>" if mongodb_available else ""}
+                {"<li><a href='#' onclick='initData()'>Initialize Sample Data</a></li>" if mongodb_available else ""}
             </ul>
             
             <h3>🗄️ Database Features:</h3>
             <ul>
-                <li>✅ MongoDB Connection</li>
-                <li>✅ Clients Management</li>
-                <li>✅ Service Reports</li>
-                <li>✅ Sample Data Creation</li>
+                <li>{'✅' if mongodb_available else '❌'} MongoDB Connection</li>
+                <li>{'✅' if mongodb_available else '❌'} Clients Management</li>
+                <li>{'✅' if mongodb_available else '❌'} Service Reports</li>
+                <li>{'✅' if mongodb_available else '❌'} Sample Data Creation</li>
             </ul>
             
             <script>
-                function initData() {
-                    fetch('/api/init-data', {method: 'POST'})
+                function initData() {{
+                    fetch('/api/init-data', {{method: 'POST'}})
                         .then(response => response.json())
                         .then(data => alert(JSON.stringify(data, null, 2)))
                         .catch(error => alert('Error: ' + error));
-                }
+                }}
             </script>
         </body>
     </html>
