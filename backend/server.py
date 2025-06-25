@@ -32,15 +32,46 @@ def get_la_time():
 def get_la_time_str():
     return get_la_time().strftime("%H:%M")
 
-# MongoDB connection - Railway Plugin Priority
-mongo_url = os.environ.get('DATABASE_URL', os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
+# MongoDB connection - Railway Plugin Priority with URL encoding
+import urllib.parse
+
+def encode_mongo_url(mongo_url):
+    """Safely encode MongoDB URL to handle special characters"""
+    if not mongo_url or 'mongodb' not in mongo_url:
+        return mongo_url
+    
+    try:
+        # If it's a mongodb+srv URL, handle encoding
+        if mongo_url.startswith('mongodb+srv://'):
+            # Extract components
+            parts = mongo_url.replace('mongodb+srv://', '').split('@')
+            if len(parts) == 2:
+                auth_part = parts[0]
+                url_part = parts[1]
+                
+                # Split username:password
+                if ':' in auth_part:
+                    username, password = auth_part.split(':', 1)
+                    # Encode username and password
+                    username_encoded = urllib.parse.quote_plus(username)
+                    password_encoded = urllib.parse.quote_plus(password)
+                    # Reconstruct URL
+                    return f"mongodb+srv://{username_encoded}:{password_encoded}@{url_part}"
+        
+        return mongo_url
+    except Exception as e:
+        logging.error(f"Error encoding MongoDB URL: {e}")
+        return mongo_url
+
+mongo_url_raw = os.environ.get('DATABASE_URL', os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
+mongo_url = encode_mongo_url(mongo_url_raw)
 db_name = os.environ.get('DB_NAME', 'pool_maintenance_db')
 
 # Add error handling for MongoDB connection
 try:
     client = AsyncIOMotorClient(mongo_url)
     db = client[db_name]
-    logging.info(f"MongoDB connected to: {mongo_url}")
+    logging.info(f"MongoDB connected successfully")
 except Exception as e:
     logging.error(f"MongoDB connection failed: {e}")
     # Use fallback for development
