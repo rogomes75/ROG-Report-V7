@@ -28,7 +28,7 @@
 Configure apenas estas:
 ```
 DB_NAME=pool_maintenance_db
-REACT_APP_BACKEND_URL=https://app1.rogpoolservice.com
+REACT_APP_BACKEND_URL=https://app5.rogpoolservice.com
 ```
 
 ### **3. MongoDB Plugin (Recomendado):**
