@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from contextlib import asynccontextmanager
 import os
 import logging
 from pathlib import Path
@@ -43,8 +44,42 @@ ALGORITHM = "HS256"
 security = HTTPBearer()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Create the main app without a prefix
-app = FastAPI()
+# Startup/Shutdown logic using lifespan
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    # Check if admin user exists, if not create one
+    admin_user = await db.users.find_one({"username": "admin"})
+    if not admin_user:
+        admin_user_data = {
+            "id": str(uuid.uuid4()),
+            "username": "admin",
+            "password_hash": get_password_hash("admin123"),
+            "role": "admin",
+            "created_at": get_la_time()
+        }
+        await db.users.insert_one(admin_user_data)
+        logging.info("Admin user created")
+    
+    # Create a new test admin user
+    test_admin = await db.users.find_one({"username": "testadmin"})
+    if not test_admin:
+        test_admin_data = {
+            "id": str(uuid.uuid4()),
+            "username": "testadmin",
+            "password_hash": get_password_hash("test123"),
+            "role": "admin",
+            "created_at": get_la_time()
+        }
+        await db.users.insert_one(test_admin_data)
+        logging.info("Test admin user created: testadmin/test123")
+    
+    yield
+    # Shutdown
+    client.close()
+
+# Create the main app with lifespan
+app = FastAPI(lifespan=lifespan)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
