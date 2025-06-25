@@ -38,8 +38,8 @@ REACT_APP_BACKEND_URL=https://app5.rogpoolservice.com
 ## ✅ **Resultado Esperado:**
 ```
 ✅ Build successful
-✅ API funcionando: https://app1.rogpoolservice.com/api/
-✅ Frontend carregando: https://app1.rogpoolservice.com
+✅ API: https://app5.rogpoolservice.com/api/
+✅ Frontend: https://app5.rogpoolservice.com
 ```
 
 ## 🧪 **Testar Após Deploy:**
