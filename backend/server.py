@@ -178,35 +178,6 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
-# Initialize admin user
-@app.on_event("startup")
-async def startup_event():
-    # Check if admin user exists, if not create one
-    admin_user = await db.users.find_one({"username": "admin"})
-    if not admin_user:
-        admin_user_data = {
-            "id": str(uuid.uuid4()),
-            "username": "admin",
-            "password_hash": get_password_hash("admin123"),
-            "role": "admin",
-            "created_at": get_la_time()
-        }
-        await db.users.insert_one(admin_user_data)
-        logging.info("Admin user created")
-    
-    # Create a new test admin user
-    test_admin = await db.users.find_one({"username": "testadmin"})
-    if not test_admin:
-        test_admin_data = {
-            "id": str(uuid.uuid4()),
-            "username": "testadmin",
-            "password_hash": get_password_hash("test123"),
-            "role": "admin",
-            "created_at": get_la_time()
-        }
-        await db.users.insert_one(test_admin_data)
-        logging.info("Test admin user created: testadmin/test123")
-
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
