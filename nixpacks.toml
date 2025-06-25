@@ -7,7 +7,7 @@ nixPkgs = ["nodejs", "python311", "python311Packages.pip"]
 [phases.install]
 cmds = [
     "cd frontend && npm ci --production=false",
-    "cd backend && pip install -r requirements_simple.txt"
+    "cd backend && pip install -r requirements_minimal.txt"
 ]
 
 [phases.build]
