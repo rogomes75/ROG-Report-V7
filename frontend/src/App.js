@@ -2849,14 +2849,3 @@ export default function AppWithAuth() {
     </AuthProvider>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
